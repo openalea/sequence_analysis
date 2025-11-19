@@ -1,4 +1,4 @@
-vplants.stat_tool
+vplants.sequence_analysis
 -----------------
 
 Description
@@ -32,4 +32,4 @@ Dependencies
 ---------------------
 
 vplants.tool
-vplants.stat_tool
+vplants.sequence_analysis
