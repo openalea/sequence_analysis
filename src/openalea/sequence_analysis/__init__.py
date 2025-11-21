@@ -1,7 +1,5 @@
 """Sequence Analysis init file"""
 
-__revision__ = "$Id$"
-
 from openalea.stat_tool import *
 # import openalea.stat_tool._stat_tool
 
