@@ -37,13 +37,19 @@ except PackageNotFoundError:
     # package is not installed
     pass
 
-if sys.platform.startswith("win"):
-    os.add_dll_directory(str(Path(__file__).parent.parent / "lib"))
+#if sys.platform.startswith("win"):
+#    os.add_dll_directory(str(Path(__file__).parent.parent / "lib"))
 
 
 def get_shared_data(file):
-    import openalea.stat_tool
+    import openalea.sequence_analysis
 
     datadir = files("openalea.sequence_analysis.data")
     with as_file(datadir / file) as f:
         return str(f)
+
+def get_shared_data_path():
+    import openalea.sequence_analysis
+
+    datadir = files("openalea.sequence_analysis.data")
+    return datadir

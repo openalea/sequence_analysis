@@ -9,18 +9,23 @@ build-backend = "scikit_build_core.build"
 include-package-data = false # force explicit declaration of data (disable automatic inclusion)
 
 [tool.setuptools.package-data]
-"openalea.pkg_name" = ["data/**/*"]
+"openalea.sequence_analysis" = ["data/**/*"]
 
 # enable dynamic version based on git tags
 [tool.setuptools_scm]
+fallback_version = "1.4.0"
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
 [tool.scikit-build]
 build-dir = "./build/"
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 logging.level = "WARNING"
 build.verbose = true
+sdist.include = ["*.so", "*.dylib", "*.dll", "*.pyd", "*.lib"]
 editable.rebuild = true
-experimental = true
+experimental = false
+search.site-packages = false
 
 [tool.scikit-build.cmake]
 build-type = "Release"
@@ -28,6 +33,7 @@ source-dir = "."
 
 [tool.scikit-build.wheel.packages]
 "openalea/sequence_analysis" = "src/openalea/sequence_analysis"
+"openalea/seqint" = "src/openalea/seqint"
 
 [project]
 name = "openalea.sequence_analysis"
@@ -35,6 +41,8 @@ authors = [
   { name = "Yann Guédon" },
   { name = "Jean-Baptiste Durand" },
   { name = "Thomas Cokelaer" },
+  { name = "Christophe Pradal"},
+  { name = "Thomas Arsouze" },
 ]
 description = "Statistical analysis of plant architecture sequences"
 readme = "README.md"
@@ -65,7 +73,6 @@ dependencies = [
 [project.optional-dependencies]
 test = [
   "pytest",
-  "nose",
   "nbmake",
 ]
 dev = [
@@ -96,9 +103,9 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/openalea/StructureAnalysis/sequence_analysis"
+Repository = "https://github.com/openalea/sequence_analysis"
 Homepage = "https://sequence_analysis.readthedocs.io/"
-"Bug Tracker" = "https://github.com/openalea/StructureAnalysis/issues"
-Discussions = "https://github.com/openalea/StructureAnalysis/discussions"
-Changelog = "https://github.com/openalea/StructureAnalysis/releases"
+"Bug Tracker" = "https://github.com/openalea/sequence_analysis/issues"
+Discussions = "https://github.com/openalea/sequence_analysis/discussions"
+Changelog = "https://github.com/openalea/sequence_analysis/releases"
 
