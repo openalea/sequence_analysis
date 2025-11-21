@@ -35,6 +35,8 @@ requirements:
     {% endfor  %}
     - cmake
     - make                                 # [not win]
+    - openalea.stat_tool
+    - boost
 
   build:
     - {{ compiler("cxx") }}
