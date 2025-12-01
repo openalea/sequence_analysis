@@ -217,14 +217,5 @@ class interface():
 
 
 def robust_path(filename):
-    p = get_shared_data_path(sa)
-    if p is not None:
-        # module in develop mode?
-        return get_shared_data(filename)
-    
-    p = Path(sa.__path__[0])
-    if 'src' in str(p):
-        root_pkg = p/'../../..'
-        data = get_shared_data_path(root_pkg)
-        return os.path.join(data,filename)
-
+    p = get_shared_data(filename)
+    return p

@@ -6,12 +6,16 @@
 """
 __revision__ = "$Id$"
 
+import pytest
+
 from openalea.sequence_analysis.sequences import Sequences
 from openalea.sequence_analysis.semi_markov import SemiMarkov
 from openalea.sequence_analysis.data_transform import AddAbsorbingRun
-from tools import runTestClass, robust_path as get_shared_data
+from openalea.sequence_analysis import get_shared_data
 
-class _AddAbsorbingRun():
+MAX_RUN_LENGTH = 20
+
+class _AddAbsorbingRun:
     """
     a main class to test the AddAbsorbingrun function on different type of 
     data structure.
@@ -64,6 +68,56 @@ class _AddAbsorbingRun():
         except Exception:
             assert True
 
+
+
+@pytest.fixture
+def seq():
+    return Sequences(str(get_shared_data('sequences1.seq')))
+
+@pytest.fixture
+def semi_markov():
+    markov = SemiMarkov(str(get_shared_data('test_semi_markov.dat')))
+    return markov.simulation_nb_elements(1, 1000, True)
+
+
+def test_max_length_seq(seq):
+    assert seq.max_length == 30
+
+def test_boost_versus_module_seq(seq):
+    sequence_length = -1
+    run_length = 6
+    
+    boost = seq.add_absorbing_run(sequence_length, run_length)
+    module1 = AddAbsorbingRun(seq, 
+                                SequenceLength=sequence_length,
+                                RunLength=run_length)
+    module2 = AddAbsorbingRun(seq, RunLength=run_length)
+
+    assert str(module1)==str(boost)
+    assert str(module2)==str(boost)
+
+
+def test_no_arguments_seq(seq):
+    assert AddAbsorbingRun(seq)
+
+def test_wrong_run_length_seq(seq):
+    try:
+        #second arguments must be less than MAX_RU_LENGTH
+        _res = AddAbsorbingRun(seq, -1, MAX_RUN_LENGTH + 1)
+        assert False
+    except Exception:
+        assert True
+
+def test_wrong_sequence_length_seq(seq):
+    try:
+        #second arguments must be less than MAX_RU_LENGTH
+        max_length = 30
+        _res = AddAbsorbingRun(seq, max_length-1, -1)
+        assert False
+    except Exception:
+        assert True
+
+
 class Test_AddAbsorbingRun_Sequences(_AddAbsorbingRun):
     """sequences case"""
     def __init__(self):
@@ -75,6 +129,8 @@ class Test_AddAbsorbingRun_Sequences(_AddAbsorbingRun):
         seq = Sequences(str(get_shared_data('sequences1.seq')))
         return seq
     
+
+
 class Test_AddAbsorbingRun_SemiMarkov(_AddAbsorbingRun):
     """semi markov case"""
     def __init__(self):
@@ -86,8 +142,4 @@ class Test_AddAbsorbingRun_SemiMarkov(_AddAbsorbingRun):
         markov = SemiMarkov(str(get_shared_data('test_semi_markov.dat')))
         semi_markov_data = markov.simulation_nb_elements(1, 1000, True)
         return semi_markov_data
-    
-if __name__ == "__main__":
-    runTestClass(Test_AddAbsorbingRun_Sequences())
-    runTestClass(Test_AddAbsorbingRun_SemiMarkov())
-    
+

@@ -42,12 +42,14 @@ except PackageNotFoundError:
 def get_shared_data(file):
     import openalea.sequence_analysis
 
-    datadir = files("openalea.sequence_analysis.data")
+    sadir = files("openalea.sequence_analysis")
+    if sadir.is_dir():
+        datadir = sadir / "data"
     with as_file(datadir / file) as f:
         return str(f)
 
 def get_shared_data_path():
     import openalea.sequence_analysis
 
-    datadir = files("openalea.sequence_analysis.data")
-    return datadir
+    datadir = files("openalea.sequence_analysis")
+    return datadir/'data'
