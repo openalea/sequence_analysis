@@ -9,14 +9,14 @@ __revision__ = "$Id$"
 from openalea.stat_tool.vectors import Vectors
 from openalea.stat_tool.data_transform import ExtractHistogram
 
-from tools import runTestClass
+from .tools import runTestClass
 from test_tops import TopsData
 from test_hidden_semi_markov import HiddenSemiMarkovData
 from test_semi_markov import SemiMarkovData
 
 from openalea.sequence_analysis import *
 
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 _seq1 = Sequences(str(get_shared_data('dupreziana_20a2.seq')))
 

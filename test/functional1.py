@@ -8,7 +8,7 @@ __revision__ = "$Id$"
 import os
 from openalea.stat_tool import *
 from openalea.sequence_analysis import *
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 seq1 = Sequences(str(get_shared_data( 'dupreziana_20a2.seq')))   # correct
 seq2 = RemoveRun(seq1, 1, 0, "End")              # correct

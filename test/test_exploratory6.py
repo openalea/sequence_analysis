@@ -22,7 +22,7 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.compare import Compare as Compare
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 def test1():
 

@@ -18,7 +18,7 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.estimate import  Estimate
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 def test1():
     

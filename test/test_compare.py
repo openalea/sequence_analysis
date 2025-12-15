@@ -15,7 +15,7 @@ from openalea.stat_tool.data_transform import ValueSelect, ExtractHistogram
 from openalea.sequence_analysis.estimate import Estimate
 from openalea.sequence_analysis.data_transform import Thresholding
 
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 class _Compare():
     """

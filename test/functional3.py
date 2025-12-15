@@ -26,7 +26,7 @@ import os
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.estimate import  Estimate
 from openalea.sequence_analysis.compare import  Compare
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 seq69 = Sequences(str(get_shared_data( "pin_laricio_7x.seq")))
 seq70 = Cluster(seq69, "Step", 1, 10)

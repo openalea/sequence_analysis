@@ -9,7 +9,7 @@ from openalea.sequence_analysis import _sequence_analysis as sa
 from openalea.sequence_analysis.hidden_variable_order_markov import *
 from openalea.sequence_analysis.hidden_semi_markov import *
 from openalea.sequence_analysis.renewal import *
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 N = 10
 import os

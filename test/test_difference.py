@@ -9,7 +9,7 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis.data_transform import Difference
 from openalea.sequence_analysis import Sequences
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 seq1 = Sequences(str(get_shared_data("sequences1.seq")))
 seqn = Sequences(str(get_shared_data("sequences2.seq")))

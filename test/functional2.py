@@ -8,7 +8,7 @@ __revision__ = "$Id$"
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.estimate import  Estimate
 from openalea.sequence_analysis.compare import  Compare
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import runTestClass, robust_path as get_shared_data
 
 
 seq20 = Sequences(str(get_shared_data("belren1.seq")))

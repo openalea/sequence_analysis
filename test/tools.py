@@ -39,7 +39,7 @@ class interface():
     :Usage:
     In you test file, add ::
 
-        >>> from tools import interface
+        >>> from .tools import interface
 
     Then, if we consider the Compound class case, create a class as follows::
 
