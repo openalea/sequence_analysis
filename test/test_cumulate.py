@@ -34,8 +34,3 @@ def test_cumulate1():
 def test_cumulaten():
     for var in range(1, seqn.nb_variable + 1):
         assert str(seqn.cumulate(var).markovian_sequences()) == str(Cumulate(seqn, var))
-
-
-##    if __name__ == "__main__":
-##        test_cumulate1()
-##        test_cumulaten()
