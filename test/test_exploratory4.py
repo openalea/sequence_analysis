@@ -20,9 +20,20 @@
 
 __revision__ = "$Id$"
 
-from openalea.sequence_analysis import *
-from openalea.sequence_analysis.compare import Compare as Compare
-from .tools import runTestClass, robust_path as get_shared_data
+from openalea.sequence_analysis import (
+    Clustering,
+    Compare,
+    Display,
+    ExtractHistogram,
+    ExtractVectors,
+    MergeVariable,
+    Plot,
+    SegmentationExtract,
+    Sequences,
+    Shift,
+    VectorDistance,
+)
+from .tools import robust_path as get_shared_data
 
 
 def test1():
