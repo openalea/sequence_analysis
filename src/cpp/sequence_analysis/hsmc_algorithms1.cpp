@@ -247,7 +247,8 @@ double HiddenSemiMarkov::likelihood_computation(const MarkovianSequences &seq ,
               }
               state_norm[k] *= observation[j][k];
 
-              norm[j] += state_norm[k];
+              if (state_norm[k] > 0)
+                norm[j] += state_norm[k];
               break;
             }
 
@@ -262,7 +263,8 @@ double HiddenSemiMarkov::likelihood_computation(const MarkovianSequences &seq ,
               }
               forward1[k] *= observation[j][k];
 
-              norm[j] += forward1[k];
+              if (forward1[k] > 0)
+                norm[j] += forward1[k];
               break;
             }
             }
@@ -351,7 +353,8 @@ double HiddenSemiMarkov::likelihood_computation(const MarkovianSequences &seq ,
             for (k = 0;k < nb_state;k++) {
               state_in[j][k] = 0.;
               for (m = 0;m < nb_state;m++) {
-                state_in[j][k] += transition[m][k] * forward1[m];
+                if (forward1[m] > 0)
+                  state_in[j][k] += transition[m][k] * forward1[m];
               }
             }
           }
@@ -969,7 +972,9 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
               }
               state_norm[k] *= observation[j][k];
 
-              norm[j] += state_norm[k];
+              if (state_norm[k] > 0)
+                 norm[j] += state_norm[k];
+
               break;
             }
 
@@ -984,7 +989,8 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
               }
               forward1[j][k] *= observation[j][k];
 
-              norm[j] += forward1[j][k];
+              if (forward1[j][k] > 0)
+                norm[j] += forward1[j][k];
               break;
             }
             }
@@ -1766,6 +1772,7 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
     	delete hsmarkov;
     	hsmarkov = NULL;
     	hsmarkov = new HiddenSemiMarkov(*hsmarkov_best);
+      // retrieve likelihood associated with model hsmarkov and data *this
     	likelihood = hsmarkov->likelihood_computation(*this);
     	delete hsmarkov_best;
     	hsmarkov_best = NULL;
@@ -2836,8 +2843,9 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_stochastic_estimation(S
                 state_norm[k] += state_in[j - 1][k] - forward1[j - 1][k];
               }
               state_norm[k] *= observation[j][k];
-
-              norm[j] += state_norm[k];
+              
+              if (state_norm[j] > 0)
+                norm[j] += state_norm[k];
               break;
             }
 
@@ -2852,7 +2860,8 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_stochastic_estimation(S
               }
               forward1[j][k] *= observation[j][k];
 
-              norm[j] += forward1[j][k];
+              if (forward1[j][k] > 0)
+                norm[j] += forward1[j][k];
               break;
             }
             }
