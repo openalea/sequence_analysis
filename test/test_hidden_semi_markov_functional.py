@@ -18,8 +18,8 @@ from openalea.stat_tool.plot import DISABLE_PLOT
 DISABLE_PLOT = False
 # DISABLE_PLOT = True
 
-from tools import interface
-from tools import runTestClass, robust_path as get_shared_data
+from .tools import interface
+from .tools import runTestClass, robust_path as get_shared_data
 
 import os
 
