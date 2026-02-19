@@ -1,4 +1,4 @@
-# Additional resources for stat_tool
+# Additional resources for sequence_analysis
 
 ```{include} ../CONTRIBUTING.md
    :start-after: <!-- CONTRIBUTING-START -->

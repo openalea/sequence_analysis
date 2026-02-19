@@ -23,15 +23,18 @@ int main(void)
 
    bool status, geometric_poisson=false, common_dispersion=false, counting_flag=true, state_sequence=true;
    const int nb_sequence = 30 , length = 100;
+   const stat_tool::process_type itype = stat_tool::ORDINARY;
    HiddenSemiMarkov *hsmc= NULL, *hsmc_ref= NULL, *hsmc_est_file= NULL;
    SemiMarkovData *hsmd= NULL;
    stat_tool::censoring_estimator estimator=stat_tool::COMPLETE_LIKELIHOOD;
    // Hidden_variable_order_markov *hmc= NULL, *hmc_init= NULL;
    MultiPlotSet *plotable=NULL;
    MarkovianSequences *seq_estim= NULL;
+   Sequences *seq_read= NULL;
    StatError error;
    std::vector< int > select;
    const char * hsmcrefpath= "../../share/data/test_hidden_semi_markov_param.dat";
+   const char * data_fail= "../../../test/lippia_fail.seq";
    // const char * hmcinitpath= "./hmc_init.hvom";
 
    // reading and printing of a hidden Markov out tree
@@ -90,6 +93,19 @@ int main(void)
 	 }
 	 hsmc_est_file = NULL;
 
+   // Test behaviour in case of convergence failure
+   seq_read = Sequences::ascii_read(error, data_fail);
+   seq_estim = new MarkovianSequences(*seq_read);
+
+   hsmc = seq_estim->hidden_semi_markov_estimation(error, &cout, itype, 4, true, stat_tool::D_DEFAULT, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
+   if (hsmc != NULL) {
+            cout << "Estimated model:" << endl;
+            hsmc->ascii_write(cout);
+            delete hsmc;
+   }
+   hsmc = NULL;
+   delete seq_estim;
+   delete seq_read;
 
    return 0;
 }

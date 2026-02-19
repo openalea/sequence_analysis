@@ -778,6 +778,13 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
     // EM structure: iterate
     do {
       iter++;
+      if (likelihood > previous_likelihood) {
+        // save result
+        if (hsmarkov_best != NULL)
+          delete hsmarkov_best;
+        hsmarkov_best = new HiddenSemiMarkov(*hsmarkov);
+      }
+
       previous_likelihood = likelihood;
       likelihood = 0.;
 
@@ -1087,12 +1094,6 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
 
         if (likelihood == D_INF) {
           break;
-        }
-        if (likelihood > previous_likelihood) {
-      	  // save result
-      	  if (hsmarkov_best != NULL)
-      		  delete hsmarkov_best;
-      	  hsmarkov_best = new HiddenSemiMarkov(*hsmarkov);
         }
 
 #       ifdef DEBUG
@@ -1793,21 +1794,21 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
 
       // reestimation of the initial probabilities
       if (!reload_prev_optimal) {
-		  if (hsmarkov->type == ORDINARY) {
-			reestimation(hsmarkov->nb_state , chain_reestim->initial ,
-						 hsmarkov->initial , MIN_PROBABILITY , true);
-		  }
+        if (hsmarkov->type == ORDINARY) {
+        reestimation(hsmarkov->nb_state , chain_reestim->initial ,
+              hsmarkov->initial , MIN_PROBABILITY , true);
+        }
 
-		  // reestimation of the transition probabilities
+        // reestimation of the transition probabilities
 
-		  for (i = 0;i < hsmarkov->nb_state;i++) {
-			reestimation(hsmarkov->nb_state , chain_reestim->transition[i] ,
-						 hsmarkov->transition[i] , MIN_PROBABILITY , true);
-		  }
+        for (i = 0;i < hsmarkov->nb_state;i++) {
+          reestimation(hsmarkov->nb_state , chain_reestim->transition[i] ,
+                hsmarkov->transition[i] , MIN_PROBABILITY , true);
+          }
 
-		  if (hsmarkov->type == EQUILIBRIUM) {
-			hsmarkov->initial_probability_computation();
-		  }
+        if (hsmarkov->type == EQUILIBRIUM) {
+        hsmarkov->initial_probability_computation();
+        }
       }
 
       for (i = 0;i < hsmarkov->nb_state;i++) {
@@ -1822,18 +1823,19 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
       }
 
       // reestimation of the categorical observation distributions
-
-      for (i = 0;i < hsmarkov->nb_output_process;i++) {
-        if (hsmarkov->categorical_process[i]) {
-          for (j = 0;j < hsmarkov->nb_state;j++) {
-            reestimation(marginal_distribution[i]->nb_value , observation_reestim[i][j]->frequency ,
-                         hsmarkov->categorical_process[i]->observation[j]->mass ,
-                         MIN_PROBABILITY , true);
+      if (!reload_prev_optimal) {
+        for (i = 0;i < hsmarkov->nb_output_process;i++) {
+          if (hsmarkov->categorical_process[i]) {
+            for (j = 0;j < hsmarkov->nb_state;j++) {
+              reestimation(marginal_distribution[i]->nb_value , observation_reestim[i][j]->frequency ,
+                          hsmarkov->categorical_process[i]->observation[j]->mass ,
+                          MIN_PROBABILITY , true);
+            }
           }
-        }
 
-        else if (hsmarkov->discrete_parametric_process[i]) {
-          hsmarkov->discrete_parametric_process[i]->nb_value_computation();
+          else if (hsmarkov->discrete_parametric_process[i]) {
+            hsmarkov->discrete_parametric_process[i]->nb_value_computation();
+          }
         }
       }
     }

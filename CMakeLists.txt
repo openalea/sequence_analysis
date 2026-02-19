@@ -94,7 +94,7 @@ option(WITH_EFENCE "Build with efence library" OFF)
 option(WITH_TEST "Build tests" OFF)
 
 ##################################################
-# Add a library for stat_tool and its Python wrappers
+# Add a library for sequence_analysis and its Python wrappers
 add_library(oasequence_analysis SHARED)
 
 ##################################################
@@ -125,8 +125,13 @@ target_include_directories(oasequence_analysis
 
 # Optionally add efence
 if(WITH_EFENCE)
-  target_compile_definitions(oasequence_analysis PUBLIC DEBUG)
-  target_link_libraries(oasequence_analysis PUBLIC efence)
+  find_library(EFENCE_LIBRARY NAMES efence)
+  if(EFENCE_LIBRARY)
+    target_link_libraries(oasequence_analysis PUBLIC efence)
+    target_compile_definitions(oasequence_analysis PUBLIC DEBUG)
+  else()
+    message(WARNING "Could not find efence library, disabling it")
+  endif()  
 endif()
 
 # Add files to build
@@ -171,7 +176,7 @@ elseif(UNIX)
 endif()
 
 ##################################################
-# Install targets and headers for stat_tool lib
+# Install targets and headers for sequence_analysis lib
 install(TARGETS oasequence_analysis
             RUNTIME DESTINATION "${CONDA_ENV}bin/"
             LIBRARY DESTINATION "${CONDA_ENV}lib/"

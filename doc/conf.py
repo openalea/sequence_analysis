@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import subprocess
 import sys
 from importlib.metadata import metadata
 
@@ -35,6 +36,8 @@ extensions = [
     "sphinx_favicon",  # support for favicon
     "nbsphinx",  # for integrating jupyter notebooks
     "myst_parser",  # for parsing .md files
+    "matplotlib.sphinxext.plot_directive",
+    "breathe",
 ]
 
 
@@ -53,6 +56,15 @@ source_suffix = {
     ".rst": "restructuredtext",
     ".md": "markdown",
 }
+
+# C++ API
+breathe_projects = {"sequence_analysis": "xml"}
+breathe_default_project = "sequence_analysis"
+# Run doxygen when building on readthedocs
+read_the_docs_build = os.environ.get("READTHEDOCS", None) == "True"
+if read_the_docs_build:
+    subprocess.call("doxygen", shell=True)
+
 # The master toctree document.
 master_doc = "index"
 # General information about the project.
@@ -164,3 +176,5 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ("https://docs.python.org/", None)}
 
+breathe_projects = {"sequence_analysis": "xml"}
+breathe_default_project = "sequence_analysis"
