@@ -2245,16 +2245,20 @@ MultiPlotSet* SemiMarkov::get_plotable(const SemiMarkovData *seq) const
   // computation of the number of plots
 
   nb_plot_set = 0;
-
+  
+  // State process characteristics
   if ((state_process->index_value) || (characteristics)) {
+    // smoothed probabilities
     nb_plot_set++;
 
     if (characteristics) {
       index_length = characteristics->index_value->plot_length_computation();
 
       if (characteristics->index_value->frequency[index_length - 1] < MAX_FREQUENCY) {
+        // intensities
         nb_plot_set++;
       }
+      // sequence length histogram
       nb_plot_set++;
     }
   }
@@ -2333,11 +2337,13 @@ MultiPlotSet* SemiMarkov::get_plotable(const SemiMarkovData *seq) const
       }
     }
 
+    // additional histogram of sequence lengths
     if ((characteristics) && (characteristics->nb_run) && (characteristics->nb_occurrence)) {
       nb_plot_set++;
     }
   }
 
+  // Observed process characteristics
   for (i = 0;i < nb_output_process;i++) {
     if (seq) {
       switch (seq->type[0]) {
@@ -2385,7 +2391,7 @@ MultiPlotSet* SemiMarkov::get_plotable(const SemiMarkovData *seq) const
               (categorical_process[i]->recurrence_time[j])) {
             nb_plot_set++;
           }
-          else if ((characteristics) && (i < characteristics->nb_value) &&
+          else if ((characteristics) && (j < characteristics->nb_value) &&
                    (characteristics->recurrence_time[j]->nb_element > 0)) {
             nb_plot_set++;
           }
@@ -2398,16 +2404,16 @@ MultiPlotSet* SemiMarkov::get_plotable(const SemiMarkovData *seq) const
               (categorical_process[i]->sojourn_time[j])) {
             nb_plot_set++;
           }
-          else if ((characteristics) && (i < characteristics->nb_value) &&
+          else if ((characteristics) && (j < characteristics->nb_value) &&
                    (characteristics->sojourn_time[j]->nb_element > 0)) {
             nb_plot_set++;
           }
 
-/*          if ((characteristics) && (j < characteristics->nb_value) &&
+          if ((characteristics) && (j < characteristics->nb_value) &&
               (characteristics->initial_run) &&
               (characteristics->initial_run[j]->nb_element > 0)) {
             nb_plot_set++;
-          } */
+          } 
 
           if ((characteristics) && (j < characteristics->nb_value) &&
               (characteristics->final_run[j]->nb_element > 0)) {
@@ -2437,6 +2443,7 @@ MultiPlotSet* SemiMarkov::get_plotable(const SemiMarkovData *seq) const
           }
         }
 
+        // additional histogram of sequence lengths
         if ((characteristics) && (characteristics->nb_run) && (characteristics->nb_occurrence)) {
           nb_plot_set++;
         }

@@ -440,7 +440,7 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
   int i , j , k , m , n;
   int max_nb_value , iter , nb_likelihood_decrease , offset , nb_value , *occupancy_nb_value  = NULL,
       *censored_occupancy_nb_value  = NULL, **pioutput = NULL;
-  double likelihood = D_INF , previous_likelihood , occupancy_likelihood , observation_likelihood ,
+  double likelihood = D_INF , previous_likelihood = D_INF, occupancy_likelihood , observation_likelihood ,
          min_likelihood , obs_product , residual , buff , sum , occupancy_mean , **observation ,
          *norm  = NULL, *state_norm  = NULL, **forward1  = NULL, **state_in  = NULL, *backward  = NULL,
 		 **backward1  = NULL, *auxiliary  = NULL, *ofrequency  = NULL, *lfrequency  = NULL,
