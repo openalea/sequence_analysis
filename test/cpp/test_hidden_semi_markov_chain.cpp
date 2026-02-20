@@ -36,8 +36,9 @@ int main(void)
    const char * hsmcrefpath= "../../../share/data/test_hidden_semi_markov_param.dat";
    const char * data_fail= "../../../test/lippia_fail.seq";
    const char * hsmcTC00LRpath = "../../../test/TC00LR_4S_init.hscm";
+   const char * hsmcTC00Irpath = "../../../test/TC00Ir_4S_init.hscm";
    
-/*   
+ /*
    // reading and printing of a hidden Markov out tree
    hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcrefpath);
    cout << error;
@@ -93,12 +94,12 @@ int main(void)
 		 delete hsmc_est_file;
 	 }
 	 hsmc_est_file = NULL;
-*/
+*/ 
    // Test behaviour in case of convergence failure
    seq_read = Sequences::ascii_read(error, data_fail);
    cout << error;
    seq_estim = new MarkovianSequences(*seq_read);
-
+/*
    cout << "Estimate default from lippia_fail.seq" << endl;
    hsmc = seq_estim->hidden_semi_markov_estimation(error, &cout, itype, 4, true, stat_tool::D_DEFAULT, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
    if (hsmc != NULL) {
@@ -108,6 +109,8 @@ int main(void)
             hsmc = NULL;
    }
 
+  
+   // Variant: using LR initial model
    hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcTC00LRpath);
    if (hsmc_ref != NULL) {
        cout << "Estimate file init from lippia_fail.seq" << endl;
@@ -117,6 +120,28 @@ int main(void)
             hsmc_est_file->ascii_write(cout);
             plotable = hsmc_est_file->get_plotable();
             delete plotable;
+            delete hsmc_est_file;
+            hsmc_est_file = NULL;
+      }
+      delete hsmc_ref;
+      hsmc_ref = NULL;
+   }
+*/
+   // Variant: using Irreducible initial model
+   hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcTC00Irpath);
+   if (hsmc_ref != NULL) {
+       cout << "Estimate file init from lippia_fail.seq" << endl;
+	 hsmc_est_file = seq_estim->hidden_semi_markov_estimation(error, &cout, *hsmc_ref, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
+      if (hsmc_est_file != NULL) {
+            cout << "Estimated model:" << endl;
+            hsmc_est_file->ascii_write(cout);
+            plotable = hsmc_est_file->get_plotable();
+            delete plotable;
+            hsmd = hsmc_est_file->extract_data(error);
+            cout << error;
+            assert(hsmd);
+            delete hsmd;
+            hsmd = NULL;
             delete hsmc_est_file;
             hsmc_est_file = NULL;
       }

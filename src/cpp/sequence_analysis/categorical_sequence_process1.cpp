@@ -481,10 +481,12 @@ void CategoricalSequenceProcess::copy(const CategoricalSequenceProcess &process 
     if (process.first_occurrence) {
       first_occurrence = new Distribution*[nb_value];
       for (i = 0;i < nb_value;i++) {
-        first_occurrence[i] = new Distribution(*(process.first_occurrence[i]));
-      }
-    }
-    else {
+        if (process.first_occurrence[i])
+          first_occurrence[i] = new Distribution(*(process.first_occurrence[i]));
+        else 
+          first_occurrence[i] = NULL;
+        }
+    }  else {
       first_occurrence = NULL;
     }
 
@@ -501,12 +503,10 @@ void CategoricalSequenceProcess::copy(const CategoricalSequenceProcess &process 
     if (process.recurrence_time) {
       recurrence_time = new Distribution*[nb_value];
       for (i = 0;i < nb_value;i++) {
-        if (process.recurrence_time[i]) {
-          recurrence_time[i] = new Distribution(*(process.recurrence_time[i]));
-        }
-        else {
-          recurrence_time[i] = NULL;
-        }
+        if (process.recurrence_time[i]) 
+            recurrence_time[i] = new Distribution(*(process.recurrence_time[i]));
+        else
+            recurrence_time[i] = NULL;        
       }
     }
     else {
@@ -541,7 +541,10 @@ void CategoricalSequenceProcess::copy(const CategoricalSequenceProcess &process 
     if (process.nb_run) {
       nb_run = new Distribution*[nb_value];
       for (i = 0;i < nb_value;i++) {
-        nb_run[i] = new Distribution(*(process.nb_run[i]));
+        if (process.nb_run[i])
+          nb_run[i] = new Distribution(*(process.nb_run[i]));
+        else
+          nb_run[i] = NULL;
       }
     }
     else {
@@ -551,7 +554,10 @@ void CategoricalSequenceProcess::copy(const CategoricalSequenceProcess &process 
     if (process.nb_occurrence) {
       nb_occurrence = new Distribution*[nb_value];
       for (i = 0;i < nb_value;i++) {
-        nb_occurrence[i] = new Distribution(*(process.nb_occurrence[i]));
+        if (process.nb_occurrence[i])
+          nb_occurrence[i] = new Distribution(*(process.nb_occurrence[i]));
+        else
+          nb_occurrence[i] = NULL;
       }
     }
     else {
