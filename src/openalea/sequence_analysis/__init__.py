@@ -1,15 +1,10 @@
 """Sequence Analysis init file"""
-__revision__ = "$Id$"
 
 from openalea.stat_tool import *
-#import openalea.stat_tool._stat_tool
+# import openalea.stat_tool._stat_tool
 
-from importlib.resources import as_file, files
 from os.path import join as pj
 import os
-from pathlib import Path
-import sys
-
 import openalea.stat_tool.interface as interface
 
 
@@ -18,13 +13,14 @@ from .simulate import *
 from .compare import *
 
 from .time_events import *
+
 # from top_parameters import *
 # from tops import *
 from .sequences import *
 from .hidden_semi_markov import *
 from .hidden_variable_order_markov import *
 from .semi_markov import *
-from .data_transform  import *
+from .data_transform import *
 
 from .estimate import *
 from .nonhomogeneous_markov import *
@@ -34,7 +30,7 @@ from .distance_matrix import *
 from .enums_seq import *
 
 try:
-    __version__ = version("openalea.stat_tool")
+    __version__ = version("openalea.sequence_analysis")
 except PackageNotFoundError:
     # package is not installed
     pass
@@ -46,6 +42,14 @@ except PackageNotFoundError:
 def get_shared_data(file):
     import openalea.sequence_analysis
 
-    datadir = files("openalea.sequence_analysis.data")
+    sadir = files("openalea.sequence_analysis")
+    if sadir.is_dir():
+        datadir = sadir / "data"
     with as_file(datadir / file) as f:
         return str(f)
+
+def get_shared_data_path():
+    import openalea.sequence_analysis
+
+    datadir = files("openalea.sequence_analysis")
+    return datadir/'data'
