@@ -13,9 +13,13 @@ from openalea.sequence_analysis.tops import Tops
 from openalea.sequence_analysis.simulate import Simulate
 from openalea.sequence_analysis.top_parameters import TopParameters
 from openalea.sequence_analysis.data_transform import *
-from openalea.sequence_analysis import get_shared_data
 
-
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
 
 from tools import interface
 from tools import runTestClass

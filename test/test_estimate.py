@@ -16,8 +16,13 @@ from test_semi_markov import SemiMarkovData
 
 from openalea.sequence_analysis import *
 
-from tools import runTestClass, robust_path as get_shared_data
-
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
+    
 _seq1 = Sequences(str(get_shared_data('dupreziana_20a2.seq')))
 
 seq2 = RemoveRun(_seq1, 1, 0, "End")

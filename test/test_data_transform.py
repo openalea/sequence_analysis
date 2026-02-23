@@ -17,7 +17,13 @@ from openalea.stat_tool import SelectStep
 from openalea.stat_tool import Plot
 from openalea.stat_tool import Display
 from openalea.stat_tool import Vectors
-from tools import runTestClass, robust_path as get_shared_data
+
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
 
 class TestRemoveRun():
 

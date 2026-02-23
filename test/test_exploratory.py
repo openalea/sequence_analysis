@@ -18,8 +18,14 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.estimate import  Estimate
-from tools import runTestClass, robust_path as get_shared_data
 
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
+    
 def test1():
     
     seq0 = Sequences(str(get_shared_data("chene_sessile_15pa.seq")))

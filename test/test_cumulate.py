@@ -11,8 +11,12 @@ __revision__ = "$Id$"
 
 
 from openalea.sequence_analysis.data_transform import Cumulate
-from tools import runTestClass, robust_path as get_shared_data
-from openalea.sequence_analysis import Sequences
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_datafrom openalea.sequence_analysis import Sequences
 
 seqn = Sequences(str(get_shared_data("sequences2.seq")))
 seq1 = Sequences(str(get_shared_data("sequences1.seq")))

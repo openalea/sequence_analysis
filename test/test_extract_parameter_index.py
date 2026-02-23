@@ -7,7 +7,13 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis.data_transform import IndexParameterExtract
 from openalea.sequence_analysis.sequences import Sequences
-from tools import runTestClass, robust_path as get_shared_data
+
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
 
 def test1():
     """FIXME markovian_sequences call"""

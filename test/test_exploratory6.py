@@ -22,8 +22,14 @@ __revision__ = "$Id$"
 
 from openalea.sequence_analysis import *
 from openalea.sequence_analysis.compare import Compare as Compare
-from tools import runTestClass, robust_path as get_shared_data
 
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
+    
 def test1():
 
     seq66 = Sequences(str(get_shared_data("laricio_date66.seq")))
