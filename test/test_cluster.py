@@ -51,29 +51,35 @@ class _HistoCase(_Cluster):
     cluster_information
     """
     def init(self):
-        self._Cluster.init()
+        super().init()
         self.data = None
 
     def test_cluster_step(self):
-        cluster1 = Cluster(self.data, "Step", 2)
-        cluster2 = self.data.cluster_step(2)
-        assert str(cluster1) == str(cluster2)
+        self.create_data()
+        if not(self.data is None):
+            cluster1 = Cluster(self.data, "Step", 2)
+            cluster2 = self.data.cluster_step(2)
+            assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
-        cluster1 = Cluster(self.data, "Limit", [2, 4, 6, 8, 10])
-        cluster2 = self.data.cluster_limit([2, 4, 6, 8, 10])
-        assert str(cluster1) == str(cluster2)
+        self.create_data()
+        if not(self.data is None):
+            cluster1 = Cluster(self.data, "Limit", [2, 4, 6, 8, 10])
+            cluster2 = self.data.cluster_limit([2, 4, 6, 8, 10])
+            assert str(cluster1) == str(cluster2)
 
     def test_cluster_information(self):
-        cluster1 = Cluster(self.data, "Information", 0.8)
-        cluster2 = self.data.cluster_information(0.8)
-        assert str(cluster1) == str(cluster2)
+        self.create_data()
+        if not(self.data is None):
+            cluster1 = Cluster(self.data, "Information", 0.8)
+            cluster2 = self.data.cluster_information(0.8)
+            assert str(cluster1) == str(cluster2)
 
 
 class TestHistogram(_HistoCase):
 
     def init(self):
-        self._HistoCase.init()
+        super().init()
 
     def create_data(self):
         self.init()
@@ -83,7 +89,7 @@ class TestHistogram(_HistoCase):
 class TestConvolution( _HistoCase):
 
     def init(self):
-        self._HistoCase.init()
+        super().init()
 
     def create_data(self):
         self.init()
@@ -94,7 +100,7 @@ class TestConvolution( _HistoCase):
 class TestCompound(_HistoCase):
 
     def init(self):
-        self._HistoCase.init()
+        super().init()
 
     def create_data(self):
         self.init()
@@ -105,54 +111,54 @@ class TestCompound(_HistoCase):
 class TestVectorsn(_Cluster):
 
     def init(self):
-        self._Cluster.init()
+        super().init()
 
     def create_data(self):
         self.init()
+        data = Vectors([[1, 2, 3], [1, 3, 1], [4, 5, 6]])
         self.data = data
-        v = Vectors([[1, 2, 3], [1, 3, 1], [4, 5, 6]])
-        return v
+        return self.data
 
     def test_cluster_step(self):
         self.create_data()
-        cluster1 = data.cluster_step(1, 2)
-        cluster2 = Cluster(data, "Step", 1, 2)
+        cluster1 = self.data.cluster_step(1, 2)
+        cluster2 = Cluster(self.data, "Step", 1, 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
         self.create_data()
-        cluster1 = data.cluster_limit(1, [2, 4, 6])
-        cluster2 = Cluster(data, "Limit", 1, [2, 4, 6])
+        cluster1 = self.data.cluster_limit(1, [2, 4, 6])
+        cluster2 = Cluster(self.data, "Limit", 1, [2, 4, 6])
         assert str(cluster1) == str(cluster2)
 
 class TestVectors1(_Cluster):
 
     def init(self):
-        self._Cluster.init()
+        super().init()
 
     def create_data(self):
         self.init()
-        v = Vectors([[1], [1], [4]])
+        data = Vectors([[1], [1], [4]])
         self.data = data
-        return v
+        return self.data
 
     def test_cluster_step(self):
         self.create_data()
-        cluster1 = data.cluster_step(1, 2)
-        cluster2 = Cluster(data, "Step", 2)
+        cluster1 = self.data.cluster_step(1, 2)
+        cluster2 = Cluster(self.data, "Step", 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
         self.create_data()
-        cluster1 = data.cluster_limit(1, [2, 4, 6])
-        cluster2 = Cluster(data, "Limit",  [2, 4, 6])
+        cluster1 = self.data.cluster_limit(1, [2, 4, 6])
+        cluster2 = Cluster(self.data, "Limit",  [2, 4, 6])
         assert str(cluster1) == str(cluster2)
 
 
 class TestSequences1(_Cluster):
 
     def init(self):
-        self._Cluster.init()
+        super().init()
 
     def create_data(self):
         self.init()
@@ -163,22 +169,22 @@ class TestSequences1(_Cluster):
     def test_cluster_step(self):
         self.create_data()
         mode = False
-        cluster1 = data.cluster_step(1, 2, mode)
-        cluster2 = Cluster(data, "Step", 2)
+        cluster1 = self.data.cluster_step(1, 2, mode)
+        cluster2 = Cluster(self.data, "Step", 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
         self.create_data()
-        print(data.nb_variable)
-        cluster1 = data.cluster_limit(1,[2], False)
-        cluster2 = Cluster(data,"Limit", [2] , AddVariable=False)
+        print(self.data.nb_variable)
+        cluster1 = self.data.cluster_limit(1,[2], False)
+        cluster2 = Cluster(self.data,"Limit", [2] , AddVariable=False)
         assert str(cluster1) == str(cluster2)
 
 
 class TestSequencesn(_Cluster):
 
     def init(self):
-        self._Cluster.init()
+        super().init()
 
     def create_data(self):
         self.init()
@@ -189,14 +195,14 @@ class TestSequencesn(_Cluster):
     def test_cluster_step(self):
         self.create_data()
         mode = True
-        cluster1 = data.cluster_step(1, 2, mode)
-        cluster2 = Cluster(data, "Step", 1, 2)
+        cluster1 = self.data.cluster_step(1, 2, mode)
+        cluster2 = Cluster(self.data, "Step", 1, 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
         self.create_data()
-        cluster1 = data.cluster_limit(1, [2 ], True)
-        cluster2 = Cluster(data, "Limit", 1, [2])
+        cluster1 = self.data.cluster_limit(1, [2 ], True)
+        cluster2 = Cluster(self.data, "Limit", 1, [2])
         assert str(cluster1) == str(cluster2)
 
 if __name__ ==  "__main__":
@@ -213,5 +219,15 @@ if __name__ ==  "__main__":
     TSn.test_cluster_limit()
     TSn.test_cluster_step()
     TC = TestConvolution()
+    TC.test_cluster_information()
+    TC.test_cluster_limit()
+    TC.test_cluster_step()
     TC2 = TestCompound()
+    TC2.test_cluster_information()
+    TC2.test_cluster_limit()
+    TC2.test_cluster_step()
     H = TestHistogram()
+    H.test_cluster_information()
+    H.test_cluster_limit()
+    H.test_cluster_step()
+    
