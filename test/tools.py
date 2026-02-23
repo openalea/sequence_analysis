@@ -9,8 +9,9 @@ from openalea.stat_tool.output import Display, Save
 DISABLE_PLOT=True
 
 from pathlib import Path
-from openalea.sequence_analysis import get_shared_data, get_shared_data_path
+from openalea.sequence_analysis import get_shared_data
 import openalea.stat_tool as st
+import openalea.stat_tool.plot
 import openalea.sequence_analysis as sa
 from openalea.stat_tool.distribution import set_seed
 
@@ -20,6 +21,7 @@ from openalea.stat_tool.distribution import set_seed
 # import os
 # from openalea.stat_tool.output import Display, Save
 
+from pathlib import Path
 
 __revision__ = "$Id$"
 
@@ -28,16 +30,23 @@ def runTestClass(myclass):
     for function in functions:
         getattr(myclass, function)()
 
-class interface():
-    """Interface to be used by test file that perform tests on the following
-    data structure: compound, convolution, mixture, histogram, vector
+def _remove_file(filename):
+    """alias to remove a file"""
+    try:
+        os.remove(filename)
+    except:
+        pass
+
+class interface:
+    """Interface to be used by test files related to data structure such as
+    compound, convolution, mixture, histogram, vectors.
 
     :param data: a data that will be filled using the build_data structure
-    :para filename: a filename to a file containing the relevant data structure
+    :param filename: a filename to a file containing the relevant data structure
     :param structure: reference to a data structure Class that is not instantiated.
 
     :Usage:
-    In you test file, add ::
+    In you test file, add::
 
         >>> from tools import interface
 
@@ -59,10 +68,17 @@ class interface():
                 self.empty()
 
     """
+
     def __init__(self, data=None, filename=None, Structure=None):
+        if data is None:
+            raise AttributeError("data must be provided")
+        if Structure is None:
+            raise AttributeError("Structure  must be provided")
+
         self.data = data
         self.filename = filename
         self.structure = Structure
+        self.N = 1000
         set_seed(0)
 
     def build_data(self):
@@ -90,7 +106,7 @@ class interface():
         try:
             _h = self.structure("whatever_wrong_filename.txt")
             assert False
-        except IOError:
+        except Exception:
             assert True
 
     def print_data(self):
@@ -102,7 +118,7 @@ class interface():
         data = self.data
         data.display()
         Display(data)
-        assert data.display()==Display(data)
+        assert data.display() == Display(data)
 
     def display_versus_ascii_write(self):
         """check that display is equivalent to ascii_write"""
@@ -115,68 +131,61 @@ class interface():
         assert Display(data) == s
 
     def plot(self):
-        """run plotting routines """
-        if DISABLE_PLOT == False:
-            self.data.plot()
+        """run plotting routines"""
+        # if DISABLE_PLOT == False:
+        self.data.plot()
 
     def save(self, Format=None, skip_reading=False):
-        """In the Vector case, Format should be Data.
+        """In the Vector case, Format should be set to Data.
         :param skip_reading: some class do not have Filename Constructor;
             skip_reading can be set to False to prevent code to be run.
 
         .. todo:: This is surely a bug. to be checked"""
 
-
         c1 = self.data
-
-        try:
-            os.remove('test1.dat')
-        except:
-            pass
-        try:
-            os.remove('test2.dat')
-        except:
-            pass
+        # _remove_file('test1.dat')
+        # _remove_file('test2.dat')
 
         if Format is None:
-            c1.save('test1.dat')
-            Save(c1, 'test2.dat')
+            c1.save("test1.dat")
+            Save(c1, "test2.dat")
         else:
-            c1.save('test1.dat', Format="Data")
-            Save(c1, 'test2.dat', Format="Data")
+            c1.save("test1.dat", Format="Data")
+            Save(c1, "test2.dat", Format="Data")
 
         if skip_reading:
             pass
         else:
-            c1_read = self.structure('test1.dat')
-            c2_read = self.structure('test2.dat')
-
-            print(c1_read)
+            c1_read = self.structure("test1.dat")
+            c2_read = self.structure("test2.dat")
 
             assert c1 and c1_read and c2_read
             assert str(c1_read) == str(c2_read)
 
-        #os.remove('test1.dat')
-        #os.remove('test2.dat')
+        _remove_file("test1.dat")
+        _remove_file("test2.dat")
 
     def plot_write(self):
         h = self.data
-        h.plot_write('test', 'title')
+        h.plot_write("test", "title")
+        _remove_file("test.print")
+        _remove_file("test.plot")
+        _remove_file("test0.dat")
 
     def file_ascii_write(self):
         h = self.data
-        h.file_ascii_write('test.dat', True)
-        os.remove('test.dat')
+        h.file_ascii_write("test.dat", True)
+        _remove_file("test.dat")
 
     def file_ascii_data_write(self):
         h = self.data
-        h.file_ascii_data_write('test.dat', True)
-        os.remove('test.dat')
+        h.file_ascii_data_write("test.dat", True)
+        _remove_file("test.dat")
 
     def spreadsheet_write(self):
         h = self.data
-        h.spreadsheet_write('test.dat')
-        os.remove('test.dat')
+        h.spreadsheet_write("test.dat")
+        _remove_file("test.dat")
 
     def survival_ascii_write(self):
         d = self.data
@@ -184,7 +193,7 @@ class interface():
 
     def survival_plot_write(self):
         d = self.data
-        d.survival_plot_write('test','test')
+        d.survival_plot_write("test", "test")
 
     def survival_file_ascii_write(self):
         d = self.data
@@ -192,16 +201,19 @@ class interface():
 
     def survival_spreadsheet_write(self):
         d = self.data
-        d.survival_spreadsheet_write('test.xsl')
-        os.remove('test.xsl')
+        d.survival_spreadsheet_write("test.xsl")
+        _remove_file("test.xsl")
 
-    def simulate(self):
+    def simulate(self, N=-1):
         """Test the simulate method"""
+        set_seed(0)
+        if N == -1:
+            N = self.N
         m = self.data
-        s = m.simulate(1000)
-        s2 = Simulate(m, 1000)
-        assert len(s) == 1000
-        assert len(s2) == 1000
+        s = m.simulate(N)
+        s2 = Simulate(m, N)
+        assert len(s) == N
+        assert len(s2) == N
         assert str(s2)
         assert str(s)
         return s
@@ -217,14 +229,13 @@ class interface():
 
 
 def robust_path(filename):
-    p = get_shared_data_path(sa)
+    p = st.get_shared_data(filename)
     if p is not None:
         # module in develop mode?
         return get_shared_data(filename)
-    
-    p = Path(sa.__path__[0])
-    if 'src' in str(p):
-        root_pkg = p/'../../..'
-        data = get_shared_data_path(root_pkg)
-        return os.path.join(data,filename)
 
+    p = Path(st.__path__[0])
+    if "src" in str(p):
+        root_pkg = p + "/../../.."
+        data = st.get_shared_data(root_pkg)
+        return os.path.join(data, filename)

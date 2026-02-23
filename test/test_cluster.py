@@ -15,7 +15,13 @@ from openalea.stat_tool.convolution import Convolution
 from openalea.stat_tool.compound import Compound
 from openalea.stat_tool.vectors import Vectors
 
-from tools import runTestClass, robust_path as get_shared_data
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
+
 
 class _Cluster():
     """Test class to test cluster function and classes
@@ -23,10 +29,11 @@ class _Cluster():
     create_data, cluster_step and cluster_limit funciton will be required
     """
 
-    def __init__(self):
+    def init(self):
         self.data = None
 
     def create_data(self):
+        self.init()
         raise NotImplemented
 
     def test_cluster_step(self):
@@ -43,8 +50,8 @@ class _HistoCase(_Cluster):
     In addition, classes that inherits from _HistoCase must implement
     cluster_information
     """
-    def __init__(self):
-        _Cluster.__init__(self)
+    def init(self):
+        self._Cluster.init()
         self.data = None
 
     def test_cluster_step(self):
@@ -65,76 +72,78 @@ class _HistoCase(_Cluster):
 
 class TestHistogram(_HistoCase):
 
-    def __init__(self):
-        _HistoCase.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._HistoCase.init()
 
     def create_data(self):
-        return Histogram(str(get_shared_data( 'fagus1.his')))
+        self.init()
+        return Histogram(get_shared_data("data/fagus1.his"))
 
 
 class TestConvolution( _HistoCase):
 
-    def __init__(self):
-        _HistoCase.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._HistoCase.init()
 
     def create_data(self):
-        conv = Convolution(str(get_shared_data('test_convolution1.conv')))
+        self.init()
+        conv = Convolution(get_shared_data("data/test_convolution1.conv"))
         return conv.simulate(1000)
 
 
 class TestCompound(_HistoCase):
 
-    def __init__(self):
-        _HistoCase.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._HistoCase.init()
 
     def create_data(self):
-        comp = Compound(str(get_shared_data('test_compound1.cd')))
+        self.init()
+        comp = Compound(get_shared_data("data/test_compound1.cd"))
         return comp.simulate(1000)
 
 
 class TestVectorsn(_Cluster):
 
-    def __init__(self):
-        _Cluster.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._Cluster.init()
 
     def create_data(self):
+        self.init()
+        self.data = data
         v = Vectors([[1, 2, 3], [1, 3, 1], [4, 5, 6]])
         return v
 
     def test_cluster_step(self):
-        data = self.data
+        self.create_data()
         cluster1 = data.cluster_step(1, 2)
         cluster2 = Cluster(data, "Step", 1, 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
-        data = self.data
+        self.create_data()
         cluster1 = data.cluster_limit(1, [2, 4, 6])
         cluster2 = Cluster(data, "Limit", 1, [2, 4, 6])
         assert str(cluster1) == str(cluster2)
 
 class TestVectors1(_Cluster):
 
-    def __init__(self):
-        _Cluster.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._Cluster.init()
 
     def create_data(self):
+        self.init()
         v = Vectors([[1], [1], [4]])
+        self.data = data
         return v
 
     def test_cluster_step(self):
-        data = self.data
+        self.create_data()
         cluster1 = data.cluster_step(1, 2)
         cluster2 = Cluster(data, "Step", 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
-        data = self.data
+        self.create_data()
         cluster1 = data.cluster_limit(1, [2, 4, 6])
         cluster2 = Cluster(data, "Limit",  [2, 4, 6])
         assert str(cluster1) == str(cluster2)
@@ -142,23 +151,24 @@ class TestVectors1(_Cluster):
 
 class TestSequences1(_Cluster):
 
-    def __init__(self):
-        _Cluster.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._Cluster.init()
 
     def create_data(self):
-        data = Sequences(str(get_shared_data('sequences1.seq')))
+        self.init()
+        data = Sequences(get_shared_data("data/sequences1.seq"))
+        self.data = data
         return data
 
     def test_cluster_step(self):
-        data = self.data
+        self.create_data()
         mode = False
         cluster1 = data.cluster_step(1, 2, mode)
         cluster2 = Cluster(data, "Step", 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
-        data = self.data
+        self.create_data()
         print(data.nb_variable)
         cluster1 = data.cluster_limit(1,[2], False)
         cluster2 = Cluster(data,"Limit", [2] , AddVariable=False)
@@ -167,32 +177,41 @@ class TestSequences1(_Cluster):
 
 class TestSequencesn(_Cluster):
 
-    def __init__(self):
-        _Cluster.__init__(self)
-        self.data = self.create_data()
+    def init(self):
+        self._Cluster.init()
 
     def create_data(self):
-        data = Sequences(str(get_shared_data('sequences2.seq')))
+        self.init()
+        data = Sequences(get_shared_data("data/sequences2.seq"))
+        self.data = data
         return data
 
     def test_cluster_step(self):
-        data = self.data
+        self.create_data()
         mode = True
         cluster1 = data.cluster_step(1, 2, mode)
         cluster2 = Cluster(data, "Step", 1, 2)
         assert str(cluster1) == str(cluster2)
 
     def test_cluster_limit(self):
-        data = self.data
+        self.create_data()
         cluster1 = data.cluster_limit(1, [2 ], True)
         cluster2 = Cluster(data, "Limit", 1, [2])
         assert str(cluster1) == str(cluster2)
 
 if __name__ ==  "__main__":
-    runTestClass(TestVectors1())
-    runTestClass(TestVectorsn())
-    runTestClass(TestSequences1())
-    runTestClass(TestSequencesn())
-    runTestClass(TestConvolution())
-    runTestClass(TestCompound())
-    runTestClass(TestHistogram())
+    TV1 = TestVectors1()
+    TV1.test_cluster_limit()
+    TV1.test_cluster_step()
+    TVn = TestVectorsn()
+    TVn.test_cluster_limit()
+    TVn.test_cluster_step()
+    TS1 = TestSequences1()
+    TS1.test_cluster_limit()
+    TS1.test_cluster_step()
+    TSn = TestSequencesn()
+    TSn.test_cluster_limit()
+    TSn.test_cluster_step()
+    TC = TestConvolution()
+    TC2 = TestCompound()
+    H = TestHistogram()
