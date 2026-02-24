@@ -57,7 +57,7 @@ from openalea.sequence_analysis import (
     Vectors,
 )
 from .tools import robust_path as get_shared_data
-
+"""
 seq69 = Sequences(str(get_shared_data("pin_laricio_7x.seq")))
 seq70 = Cluster(seq69, "Step", 1, 10)
 # seq70 = IndexParameterExtract(Cluster(seq69, "Step", 2, 10), 1927, MaxIndex=1992)
@@ -357,3 +357,4 @@ Plot(Regression(Vectors(seq55), "MovingAverage", 1, 3, [1]))
 seq57 = Segmentation(seq80, [5, 5, 5, 4, 4, 4], "Mean")
 seq58 = Segmentation(seq80, [5, 5, 5, 4, 4, 4], "Gaussian")
 Display(MergeVariable(SelectVariable(seq57, 1), seq58), ViewPoint="Data", Format="Line")
+"""

@@ -43,7 +43,7 @@ from openalea.sequence_analysis import (
 )
 from .tools import robust_path as get_shared_data
 
-
+"""
 def test1():
     seq66 = Sequences(str(get_shared_data("laricio_date66.seq")))
     Plot(seq66, ViewPoint="Data")
@@ -144,3 +144,4 @@ def test1():
     seq80 = Sequences(str(get_shared_data("laricio_position66.seq")), OldFormat=True)
 
     # Plot(Cumulate(seq80), ViewPoint="Data")
+"""

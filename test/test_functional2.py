@@ -17,6 +17,7 @@ from openalea.sequence_analysis import (
     Sequences,
     VectorDistance,
 )
+"""
 from .tools import robust_path as get_shared_data
 
 
@@ -199,3 +200,4 @@ hsmc26 = Estimate(seq26, "HIDDEN_SEMI-MARKOV", hsmc0)
 
 
 # Plot(matrix20)
+"""

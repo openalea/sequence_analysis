@@ -964,11 +964,17 @@ public:
   }
 
   static Sequences*
-  remove_run(const Sequences &seq, int variable, int ivalue, run_position position,
+  remove_run(const Sequences &seq, int ivariable, int ivalue, int iposition,
       int max_run_length)
   {
-    SIMPLE_METHOD_TEMPLATE_1(seq, remove_run, Sequences, variable, ivalue,
-        position, max_run_length);
+    run_position position = run_position(iposition);
+    Sequences *ret = NULL;
+    StatError error;
+    
+    ret = seq.remove_run(error, ivariable, ivalue, position, max_run_length);
+    if (ret == NULL) 
+        sequence_analysis::wrap_util::throw_error(error);
+    return ret;
   }
 
   static int

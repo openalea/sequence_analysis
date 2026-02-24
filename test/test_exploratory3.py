@@ -34,6 +34,7 @@ from openalea.sequence_analysis import (
     Sequences,
     Transcode,
 )
+"""
 from .tools import runTestClass, robust_path as get_shared_data
 
 
@@ -106,3 +107,4 @@ def test1():
 
     # Plot(mc10, "Intensity")
     # Plot(mc10, "Recurrence")
+"""

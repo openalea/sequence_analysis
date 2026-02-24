@@ -15,9 +15,6 @@ def test_vectors():
 def test_sequences():
     """test to be done"""
     pass
-def test_top():
-    """test to be done"""
-    pass
 def test_dist_matrix():
     """test to be done"""
     pass

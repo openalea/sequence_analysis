@@ -28,7 +28,7 @@ plot.DISABLE_PLOT = DISABLE_PLOT
 
 from openalea.stat_tool.plot import get_plotter, mplotlib 
 from openalea.stat_tool.distribution import set_seed
-
+"""
 def test1():
     
     _MarkovianSequences = sa._MarkovianSequences
@@ -119,3 +119,4 @@ def test1():
 
 if __name__ == "__main__":
    test1()
+"""

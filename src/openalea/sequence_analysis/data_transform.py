@@ -57,7 +57,7 @@ from .enums_seq import (
     markovian_sequence_type, output_map, histogram_type,
     mode_type, func_map, estimator_map, model_type, seq_map,
     renewal_nb_event_map, sub_func_map, nb_segment_map,
-    output_type, index_parameter_type_map
+    output_type, index_parameter_type_map, run_map
 )
 
 
@@ -186,9 +186,9 @@ def RemoveRun(obj, *args, **kargs):
         error.CheckType([variable, value, position], [int, int, str])
 
     if position in ['End', 'e']:
-        position = 'e'
+        position = run_map['End']
     elif position == ['b', 'Begin']:
-        position = 'b'
+        position = run_map['Begin']
     else:
         raise TypeError("position must be 'End' or 'e' or 'Begin' or 'b'")
 

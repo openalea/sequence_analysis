@@ -303,7 +303,7 @@ def _estimate_semi_markov(obj, *args, **kargs):
     Type = 'v'
     #error.CheckType([args[0]], [str])
 
-    Type = error.CheckDictKeys(args[0], stochastic_stochastic_process_type)
+    Type = error.CheckDictKeys(args[0], stochastic_process_type)
 
     NbIteration = kargs.get("NbIteration", I_DEFAULT)
     Counting = kargs.get("Counting", True)
@@ -489,7 +489,7 @@ def _estimate_variable_order_markov(obj, *args, **kargs):
     #args0 is a string
     if len(args)>0 and isinstance(args[0], str):
         Type = 'v'
-        Type = error.CheckDictKeys(args[0], stochastic_stochastic_process_type)
+        Type = error.CheckDictKeys(args[0].upper(), stochastic_process_type)
 
         # check validity of the input arguments following AML's code
         if Algorithm != LOCAL_BIC and not kargs.get("Threshold"):
