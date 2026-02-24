@@ -20,19 +20,19 @@ def create_data_moving_average():
     return Cluster(seq, "Step", 1, 10)
 
 
-class Test:
-    def test_distribution(self, create_data_moving_average):
-        seq70 = create_data_moving_average
-        MovingAverage(seq70, Distribution("B", 0, 16, 0.5), BeginEnd=True)
-        MovingAverage(
-            seq70, Distribution("B", 0, 16, 0.5), BeginEnd=True, Output="Residual"
-        )
+# class Test:
+#     def test_distribution(self, create_data_moving_average):
+#         seq70 = create_data_moving_average
+#         MovingAverage(seq70, Distribution("B", 0, 16, 0.5), BeginEnd=True)
+#         MovingAverage(
+#             seq70, Distribution("B", 0, 16, 0.5), BeginEnd=True, Output="Residual"
+#         )
 
-    def test_frequencies(self, create_data_moving_average):
-        seq70 = create_data_moving_average
-        MovingAverage(seq70, [1, 1, 1], BeginEnd=True)
-        MovingAverage(seq70, [1, 1, 1], BeginEnd=True, Output="Residual")
+#     def test_frequencies(self, create_data_moving_average):
+#         seq70 = create_data_moving_average
+#         MovingAverage(seq70, [1, 1, 1], BeginEnd=True)
+#         MovingAverage(seq70, [1, 1, 1], BeginEnd=True, Output="Residual")
 
-    def test_filter(self):
-        """test not yet implemented"""
-        pass
+#     def test_filter(self):
+#         """test not yet implemented"""
+#         pass

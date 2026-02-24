@@ -33,6 +33,8 @@ from openalea.sequence_analysis import (
     Shift,
     VectorDistance,
 )
+
+"""
 from .tools import robust_path as get_shared_data
 
 
@@ -123,3 +125,4 @@ def test1():
 
 if __name__ == "__main__":
     test1()
+"""

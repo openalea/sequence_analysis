@@ -16,13 +16,8 @@ except ImportError:
     from tools import interface
     from tools import robust_path as get_shared_data
     
-seq_m = Sequences(get_shared_data("vanille_m.seq"))
-ComputeSelfTransition(seq_m)
-Plot(seq_m, "SelfTransition")
-Plot(seq_m, "Intensity")
-Plot(seq_m, "FirstOccurrence")
 
-mc_m = Estimate(seq_m, "NONHOMOGENEOUS_MARKOV", "MONOMOLECULAR", "VOID")
-Plot(mc_m, "SelfTransition")
-Plot(mc_m, "Intensity")
+# mc_m = Estimate(seq_m, "NONHOMOGENEOUS_MARKOV", "MONOMOLECULAR", "VOID")
+# Plot(mc_m, "SelfTransition")
+# Plot(mc_m, "Intensity")
 

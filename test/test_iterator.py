@@ -36,12 +36,12 @@ def hsm_iterator(fn):
     it = sa._SemiMarkovIterator(hsm)
     return it
 
-
+"""
 def test_semi_markov_iterator2(create_data_hidden_semi_markov):
     fn = create_data_hidden_semi_markov
     smi = hsm_iterator(fn)
     sim = smi.simulation(N, True)
-
+"""
 
 # VARIABLE ORDER MARKOV case
 

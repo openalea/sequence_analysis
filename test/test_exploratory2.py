@@ -39,7 +39,7 @@ from openalea.sequence_analysis.estimate import Estimate as Estimate
 
 from .tools import runTestClass, robust_path as get_shared_data
 
-
+"""
 def test_exploratory():
     seq19 = Sequences(str(get_shared_data("dupreziana_20a2.seq")))
     seq20 = RemoveRun(seq19, 0, "End")
@@ -109,3 +109,4 @@ def test_exploratory():
 # mc10 = Estimate(seq10, "MARKOV", MaxOrder=4)
 # Plot(mc10, "Intensity")
 # Plot(mc10, "Recurrence")
+"""

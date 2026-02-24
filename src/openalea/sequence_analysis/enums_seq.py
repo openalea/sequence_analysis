@@ -255,6 +255,12 @@ begin_aligned_map = {
                   }
 end_aligned_map = begin_aligned_map
 
+
+run_map = {
+               "Begin" : RunPosition.BEGIN,
+               "End" : RunPosition.END
+            }
+
 from openalea.sequence_analysis._sequence_analysis import (
     _Sequences, _MarkovianSequences, _VariableOrderMarkovData, 
     _SemiMarkovData, _NonHomogeneousMarkovData, _VariableOrderMarkov,

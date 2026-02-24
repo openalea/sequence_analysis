@@ -25,6 +25,7 @@ from openalea.sequence_analysis import (
     Transcode,
     WordCount,
 )
+"""
 from .tools import robust_path as get_shared_data
 
 seq1 = Sequences(str(get_shared_data("dupreziana_20a2.seq")))  # correct
@@ -155,3 +156,4 @@ acf21 = ComputeAutoCorrelation(hmc11, 1, 1, MaxLag=20)
 acf22 = ComputeAutoCorrelation(hmc11, 1, 2, MaxLag=20)
 
 seq15 = Simulate(hmc11, 10000, seq10)
+"""

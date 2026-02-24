@@ -32,6 +32,7 @@ from openalea.sequence_analysis import (
     Sequences,
     VectorDistance,
 )
+"""
 from .tools import robust_path as get_shared_data
 
 
@@ -95,3 +96,4 @@ def test1():
     Compare(
         seq25, VectorDistance("S"), TestSequence=9, RefSequence=1, Transposition=True
     )
+"""

@@ -377,6 +377,12 @@ const int TOP_SIZE = 2000000;          // taille memoire maximum (en int) d'un e
      .value("POSTERIOR_PROBABILITY", POSTERIOR_PROBABILITY)
      .export_values();
 
+   enum_<sequence_analysis::wrap_util::UniqueInt<2, 113> >("RunPosition")
+     .value("BEGIN", BEGIN_RUN)
+     .value("END", END_RUN)
+     .export_values();
+
+
    /*
    const double MIN_NB_EVENT = 0.4;       // nombre d'evenements moyen minimum
   const double MIN_INTER_EVENT = 1.;     // temps moyen minimum entre 2 evenements

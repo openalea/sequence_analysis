@@ -267,12 +267,17 @@ public:
     process_type itype = process_type(iitype);
     memory_tree_selection algorithm = memory_tree_selection(ialgorithm);
     transition_estimator estimator = transition_estimator(iestimator);
+    VariableOrderMarkov *ret = NULL;
+    StatError error;
+    ostringstream os;
 
-    HEADER_OS(VariableOrderMarkov);
+
     ret = input.variable_order_markov_estimation(error, &os, itype,
         min_order, max_order, algorithm, threshold, estimator,
         global_initial_transition, global_sample, counting_flag);
-    FOOTER_OS;
+    if (ret == NULL)
+      sequence_analysis::wrap_util::throw_error(error);
+    return ret;
   }
 
   static VariableOrderMarkov*
@@ -427,7 +432,7 @@ public:
         estimator, counting_flag, state_sequence, nb_iter, mean_estimator);
 
     if (ret == NULL)
-    	sequence_analysis::wrap_util::throw_error(error);
+      sequence_analysis::wrap_util::throw_error(error);
     // FOOTER_OS;
     return(ret);
 

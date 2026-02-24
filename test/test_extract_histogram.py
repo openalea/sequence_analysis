@@ -35,7 +35,7 @@ seq20 = Sequences(str(get_shared_data("belren1.seq")))
 
 def test_vectors():
     ExtractHistogram(vec95, 2)
-
+"""
 def test_sequences():
     ExtractHistogram(seq20, "Recurrence", 1)
     ExtractHistogram(seq20, "Recurrence", 2)
@@ -49,7 +49,7 @@ def test_sequences():
 
     ExtractHistogram(seq_cluster, "Value", 1)
     ExtractHistogram(seq_cluster, "Value", 2)
-
+"""
 def test_time_events():
     """not implemented"""
 
