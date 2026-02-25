@@ -92,6 +92,8 @@ endif()
 # Options
 option(WITH_EFENCE "Build with efence library" OFF)
 option(WITH_TEST "Build tests" OFF)
+message(STATUS "WITH_EFENCE = ${WITH_EFENCE}")
+message(STATUS "WITH_TEST = ${WITH_TEST}")
 
 ##################################################
 # Add a library for sequence_analysis and its Python wrappers
