@@ -1,0 +1,51 @@
+# Test Status 
+
+This is the status of the tests (to be updated)
+
+all                                     TOBEFINALISED 
+test_add_absorbing_run.py               TOBEFINALISED
+test_build_auxiliary_variable.py        DONE
+test_cluster.py                         TOBEFINALISED
+test_compare.py                         TOBEFINALISED
+test_compute_self_transition.py         TOBEFINALISED
+test_compute_state_sequences.py         TOBEFINALISED
+test_correlation.py                     TOBEFINALISED
+test_cumulate.py                        DONE
+test_dataflow_stat.py                   TOBEFINALISED
+test_data.py                            DONE
+test_data_transform.py                  TOBEFINALISED
+test_difference.py                      DONE
+test_estimate.py                        TOBEFINALISED
+test_exploratory2.py                    TOBEFINALISED
+test_exploratory3.py                    TOBEFINALISED
+test_exploratory4.py                    TOBEFINALISED
+test_exploratory5.py                    TOBEFINALISED
+test_exploratory6.py                    TOBEFINALISED
+test_exploratory.py                     DONE      
+test_extract_data.py                    TOBEFINALISED
+test_extract_distribution.py            DONE
+test_extract_histogram.py               TOBEFINALISED
+test_extract_parameter_index.py         DONE
+test_extract_vectors.py                 TOBEFINALISED
+test_functional1.py                     TOBEFINALISED
+test_functional2.py                     TOBEFINALISED
+test_functional3.py                     TOBEFINALISED
+test_hidden_semi_markov_functional.py   DONE
+test_hidden_semi_markov.py              TOBEFINALISED
+test_hidden_variable_order_markov.      TOBEFINALISED
+test_index_extract.py                   TOBEFINALISED
+test_iterator.py                        DONE  
+test_merge.py                           TOBEFINALISED
+test_moving_average.py                  TOBEFINALISED
+test_non_homogeneous_functional.py      TOBEFINALISED
+test_nonhomogeneous.py                  TOBEFINALISED
+test_renewal_functional.py              TOBEFINALISED
+test_renewal.py                         TOBEFINALISED
+test_select_individual.py               TOBEFINALISED
+test_select_variable.py                 TOBEFINALISED
+test_semi_markov.py                     TOBEFINALISED
+test_semi_markov_switching_lm_functional.py TOBEFINALISED
+test_sequences.py                       TOBEFINALISED
+test_simulate.py                        TOBEFINALISED
+test_time_events.py                     TOBEFINALISED
+test_transcode.py                       TOBEFINALISED

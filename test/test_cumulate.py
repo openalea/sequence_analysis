@@ -2,10 +2,6 @@
 
 .. author:: Thomas Cokelaer, Thomas.Cokelaer@inria.fr
 
-.. todo : in general, variable index starts at 1 when calling Cumulate!
-Do we want to start at 0 ? Since later on, python calls will
-start the index at 0 ?
-
 """
 
 __revision__ = "$Id$"

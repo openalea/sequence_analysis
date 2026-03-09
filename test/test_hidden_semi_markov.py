@@ -116,8 +116,10 @@ class TestHiddenSemiMarkov(interface):
         self.init(HSMData)
         sm = self.data
         assert sm.simulation_nb_elements(1, 10000, True)
-        assert Simulate(sm,1, 10000, True)
-
+        s = Simulate(sm,1, 10000, True)
+        assert s
+        return s
+        
     def test_thresholding(self, HSMData):
         self.init(HSMData)
         a = self.data.thresholding(0.01)
@@ -139,22 +141,50 @@ class TestHiddenSemiMarkov(interface):
         obs = seq.select_variable([1], False)
         hsm_estim = Estimate(obs, "HIDDEN_SEMI-MARKOV", self.data, NbIteration=3)
         assert hsm_estim.extract_data()
+        return hsm_estim
+
+    def test_nb_output_process(self, HSMData):
+        """Test consistency of the number of output processes"""        
+        self.init(HSMData)
+        s = self.test_simulate(HSMData)
+        assert self.data.nb_output_process() == (s.nb_variable - 1)
+
+    def test_ascii_write(self, HSMData):
+        """Test consistency of text representation"""
+        self.init(HSMData)
+        assert str(self.data) == self.ascii_write(False) 
+
+    def test_simulation_histogram(self, HSMData):
+        """Test simulation from a distribution of sequence lengths"""
+        self.init(HSMData)
+        s1 = self.test_simulate(HSMData)
+        s2 = self.data.simulation_histogram(s1.extract_length(), False, False)
+        assert str(s1.extract_length()) == str(s2.extract_length())
+
+    # def test_extract_histogram(self, HSMData):
+        """Test extracting histograms"""
+    #     self.init(HSMData)
+    #     d = self.data
+    #     d.extract_histogram(1,1)
+    #     assert self.data.extract_histogram(1,1)
+
+    def test_get_semi_markov_data(self, HSMData):
+        """Test extracting semi-Markov data"""
+        h = self.test_extract_data(HSMData)
+        s = h.get_semi_markov_data()
+        assert self.data.nb_output_process == (s.nb_variable - 1) 
+
+    def test_state_sequence_computation(self, HSMData):
+        """Test state sequence restoration"""        
+        h = self.test_extract_data(HSMData)
+        s = h.get_semi_markov_data()
+        r = h.state_sequence_computation(s.select_variable([2], True), True)
+        assert self.data.nb_output_process == (r.nb_variable - 1) 
 
 """
 TODO: 
-hsm.nb_output_process
-hsm.ascii_write
 hsm.divergence_computation
-hsm.simulation_histogram
 hsm.extract_histogram
-hsm.simulation_markovian_sequences
-hsm.file_ascii_write
-hsm.get_forward
-hsm.simulation_nb_sequences
-hsm.get_plotable
-hsm.get_semi_markov_data
-hsm.state_sequence_computation
-hsm.get_state_subtype
 hsm.nb_iterator
 """
 
@@ -171,7 +201,7 @@ if __name__ == "__main__":
         hsm = HiddenSemiMarkov(get_shared_data('test_hidden_semi_markov.dat'))
         return HSM(data, hsm)
 
-    T = TestHiddenSemiMarkov()
+    T = TestHiddenSemiMarkov(HSMData().hsm, "", HiddenSemiMarkov)
     T.init(HSMData())
     T.test_constructor_from_file_failure(HSMData())
     T.test_constructor_from_file2()
@@ -188,3 +218,5 @@ if __name__ == "__main__":
     T.test_thresholding(HSMData())
     T.test_extract(HSMData())
     T.test_extract_data(HSMData())
+    # T.test_extract_histogram(HSMData())
+    T.test_state_sequence_computation(HSMData())

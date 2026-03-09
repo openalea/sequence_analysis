@@ -1,5 +1,7 @@
-from .tools import robust_path as get_shared_data
-
+try:
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import robust_path as get_shared_data
 
 def test_get_shared_data():
     from openalea.sequence_analysis.sequences import Sequences
@@ -8,6 +10,6 @@ def test_get_shared_data():
     assert seq
 
 
-##if __name__ == "__main__":
-##    test_get_shared_data()
+if __name__ == "__main__":
+    test_get_shared_data()
 

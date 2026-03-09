@@ -14,8 +14,13 @@ from openalea.sequence_analysis.hidden_variable_order_markov import (
 )
 from openalea.sequence_analysis.hidden_semi_markov import HiddenSemiMarkov
 from openalea.sequence_analysis.renewal import Renewal
-from .tools import runTestClass, robust_path as get_shared_data
 
+try:
+    from .tools import interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import interface
+    from tools import robust_path as get_shared_data
 N = 10
 
 
