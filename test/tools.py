@@ -66,7 +66,7 @@ class interface:
 
     """
 
-    def __init__(self, data=None, filename=None, Structure=None):
+    def init(self, data=None, filename=None, Structure=None):
         if data is None:
             raise AttributeError("data must be provided")
         if Structure is None:

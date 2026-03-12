@@ -140,7 +140,7 @@ int main(void)
             hsmd = hsmc_est_file->extract_data(error);
             cout << error;
             assert(hsmd);
-            delete hsmd;
+            delete hsmd;           
             hsmd = NULL;
             delete hsmc_est_file;
             hsmc_est_file = NULL;

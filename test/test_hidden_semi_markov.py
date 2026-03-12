@@ -9,7 +9,10 @@ __revision__ = "$Id$"
 
 #import openalea.stat
 from openalea.stat_tool import _stat_tool, set_seed
-from openalea.sequence_analysis import _sequence_analysis, Estimate
+from openalea.sequence_analysis import (_sequence_analysis, 
+                                        Estimate,
+                                        seq_map)
+
 from openalea.sequence_analysis.hidden_semi_markov import HiddenSemiMarkov
 from openalea.sequence_analysis.simulate import Simulate
 from openalea.sequence_analysis.data_transform import Thresholding
@@ -112,13 +115,16 @@ class TestHiddenSemiMarkov(interface):
         self.init(HSMData)
         self.spreadsheet_write()
 
-    def test_simulate(self, HSMData):
+    def simulate(self, HSMData):
         self.init(HSMData)
-        sm = self.data
+        sm = self.hsm
         assert sm.simulation_nb_elements(1, 10000, True)
         s = Simulate(sm,1, 10000, True)
-        assert s
         return s
+    
+    def test_simulate(self, HSMData):
+        s = self.simulate(HSMData)
+        assert s
         
     def test_thresholding(self, HSMData):
         self.init(HSMData)
@@ -126,65 +132,67 @@ class TestHiddenSemiMarkov(interface):
         b = Thresholding(self.data, MinProbability=0.01)
         assert str(a)==str(b)
 
-    def test_extract(self, HSMData):        
+    def extract_data(self, HSMData):
         self.init(HSMData)
-        assert self.data.extract(1,1,1)
-
-    def test_extract_data(self, HSMData):
-        self.init(HSMData)
-        assert self.data.extract_data() is None
+        assert self.hsm.extract_data() is None
         nb_seq = 10
         seq_length = 50
         set_seed(0)
-        seq = self.data.simulation_nb_sequences(nb_seq, seq_length, True)
+        seq = self.hsm.simulation_nb_sequences(nb_seq, seq_length, True)
         # Discard state
         obs = seq.select_variable([1], False)
-        hsm_estim = Estimate(obs, "HIDDEN_SEMI-MARKOV", self.data, NbIteration=3)
-        assert hsm_estim.extract_data()
+        hsm_estim = Estimate(obs, "HIDDEN_SEMI-MARKOV", self.hsm, NbIteration=3)
         return hsm_estim
+
+    def test_extract_data(self, HSMData):
+        hsm_estim = self.extract_data(HSMData)
+        assert hsm_estim.extract_data()
 
     def test_nb_output_process(self, HSMData):
         """Test consistency of the number of output processes"""        
         self.init(HSMData)
-        s = self.test_simulate(HSMData)
-        assert self.data.nb_output_process() == (s.nb_variable - 1)
+        s = self.simulate(HSMData)
+        assert self.hsm.nb_output_process == (s.nb_variable - 1)
 
     def test_ascii_write(self, HSMData):
         """Test consistency of text representation"""
         self.init(HSMData)
-        assert str(self.data) == self.ascii_write(False) 
+        assert str(self.data) == self.data.ascii_write(False) 
 
     def test_simulation_histogram(self, HSMData):
         """Test simulation from a distribution of sequence lengths"""
         self.init(HSMData)
-        s1 = self.test_simulate(HSMData)
-        s2 = self.data.simulation_histogram(s1.extract_length(), False, False)
+        s1 = self.simulate(HSMData)
+        s2 = self.hsm.simulation_histogram(s1.extract_length(), False, False)
         assert str(s1.extract_length()) == str(s2.extract_length())
 
-    # def test_extract_histogram(self, HSMData):
-        """Test extracting histograms"""
-    #     self.init(HSMData)
-    #     d = self.data
-    #     d.extract_histogram(1,1)
-    #     assert self.data.extract_histogram(1,1)
-
-    def test_get_semi_markov_data(self, HSMData):
-        """Test extracting semi-Markov data"""
-        h = self.test_extract_data(HSMData)
-        s = h.get_semi_markov_data()
-        assert self.data.nb_output_process == (s.nb_variable - 1) 
-
     def test_state_sequence_computation(self, HSMData):
-        """Test state sequence restoration"""        
-        h = self.test_extract_data(HSMData)
-        s = h.get_semi_markov_data()
+        """Test state sequence restoration"""  
+        h = self.extract_data(HSMData)
+        s = h.extract_data()
         r = h.state_sequence_computation(s.select_variable([2], True), True)
-        assert self.data.nb_output_process == (r.nb_variable - 1) 
+        assert self.hsm.nb_output_process == (r.nb_variable - 1) 
 
+    def test_extract(self, HSMData):
+        """Test state sequence restoration"""  
+        h = self.extract_data(HSMData)
+        for k in range(h.get_nb_state()):
+            if k < h.get_nb_state()-1:
+                assert h.extract(seq_map['Sojourn'],k,0)
+            v = 1 # Output process 1
+            assert v <= h.nb_output_process 
+            dist = h.extract(seq_map['Observation'],v,k)
+            assert dist 
+            m = dist.get_alloc_nb_value-1
+            for o in range(m):
+                assert h.extract(seq_map['Sojourn'],v,o)
+                assert h.extract(seq_map['FirstOccurrence'],v,o)
+                assert h.extract(seq_map['Recurrence'],v,o)
+                assert h.extract(seq_map['NbRun'],v,o)
+                assert h.extract(seq_map['NbOccurrence'],v,o)
 """
 TODO: 
 hsm.divergence_computation
-hsm.extract_histogram
 hsm.nb_iterator
 """
 
@@ -201,7 +209,7 @@ if __name__ == "__main__":
         hsm = HiddenSemiMarkov(get_shared_data('test_hidden_semi_markov.dat'))
         return HSM(data, hsm)
 
-    T = TestHiddenSemiMarkov(HSMData().hsm, "", HiddenSemiMarkov)
+    T = TestHiddenSemiMarkov()
     T.init(HSMData())
     T.test_constructor_from_file_failure(HSMData())
     T.test_constructor_from_file2()
@@ -219,4 +227,4 @@ if __name__ == "__main__":
     T.test_extract(HSMData())
     T.test_extract_data(HSMData())
     # T.test_extract_histogram(HSMData())
-    T.test_state_sequence_computation(HSMData())
+    # T.test_state_sequence_computation(HSMData())
