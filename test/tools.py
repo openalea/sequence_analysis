@@ -6,6 +6,18 @@ author: Jean-Baptiste Durand, Thomas Arsouze, Thomas Cokelaer
 __version__ = "$Id$"
 
 import os
+import sys
+
+import openalea.stat_tool.plot
+
+# !!! Do not plot in nosetests !!!
+# buildbot cannot close the windwos popped up by the method/function Plot/plot
+# So, we test if the command "python setup.py nosetests" has been used.
+# Still, using nosetests executable, windows should pop up.
+if ("nosetests" in sys.argv) or ("pytest" in sys.argv[0]):
+    DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = True
+else:
+    DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = False
 
 
 from openalea.stat_tool import Simulate
@@ -13,9 +25,6 @@ from openalea.stat_tool.output import Display, Save
 import openalea.stat_tool.plot
 from openalea.stat_tool.distribution import set_seed
 
-
-
-DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = True
 
 from pathlib import Path
 from openalea.sequence_analysis import get_shared_data, get_shared_data_path
@@ -48,7 +57,7 @@ class interface:
     :Usage:
     In your test file, add::
 
-        >>> from .tools import interface
+        >>> from .tools import DISABLE_PLOT, interface
 
     Then, if we consider the Compound class case, create a class as follows::
 

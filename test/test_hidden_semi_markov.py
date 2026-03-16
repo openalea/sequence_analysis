@@ -21,14 +21,11 @@ from openalea.stat_tool.data_transform import *
 from openalea.stat_tool.cluster import Cluster
 from openalea.stat_tool.cluster import Transcode, Cluster
 
-import openalea.stat_tool.plot #import DISABLE_PLOT
-openalea.stat_tool.plot.DISABLE_PLOT = True
-
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
 
 import os
@@ -170,8 +167,8 @@ class TestHiddenSemiMarkov(interface):
         """Test state sequence restoration"""  
         h = self.extract_data(HSMData)
         s = h.extract_data()
-        r = h.state_sequence_computation(s.select_variable([2], True), True)
-        assert self.hsm.nb_output_process == (r.nb_variable - 1) 
+        r = r = h.state_sequence_computation(s.select_variable([1], False), True)
+        assert self.hsm.nb_output_process == r.nb_variable-1
 
     def test_extract(self, HSMData):
         """Test state sequence restoration"""  

@@ -14,10 +14,10 @@ from openalea.stat_tool.data_transform import ExtractHistogram
 from openalea.stat_tool import set_seed
 
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
 
 from openalea.sequence_analysis import (

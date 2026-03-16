@@ -10,10 +10,10 @@ from openalea.stat_tool.data_transform import ExtractDistribution
 from openalea.sequence_analysis import *
 
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
 
 def test_hidden_semi_markov():

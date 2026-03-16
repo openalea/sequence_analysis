@@ -12,17 +12,16 @@ from openalea.stat_tool.data_transform import *
 from openalea.stat_tool.cluster import Cluster
 from openalea.stat_tool.cluster import Transcode, Cluster
 
-import openalea.stat_tool.plot #import DISABLE_PLOT
-# openalea.stat_tool.plot.DISABLE_PLOT = True
+# 
 from openalea.stat_tool.plot import DISABLE_PLOT
 DISABLE_PLOT = False
 # DISABLE_PLOT = True
 
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
     
 import os

@@ -11,10 +11,10 @@ from openalea.stat_tool.data_transform import ValueSelect, ExtractHistogram
 from openalea.sequence_analysis import *
 
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
     
 seq = Sequences(str(get_shared_data("pin_laricio_7x.seq")))

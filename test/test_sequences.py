@@ -24,7 +24,7 @@ from openalea.stat_tool.data_transform import *
 from openalea.stat_tool.cluster import Cluster
 from openalea.stat_tool.cluster import Transcode, Cluster
 
-from .tools import interface
+from .tools import DISABLE_PLOT, interface
 from .tools import runTestClass
 
 from openalea.sequence_analysis.sequences import Sequences, IndexParameterType

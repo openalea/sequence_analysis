@@ -7,6 +7,13 @@
 
 __revision__ = "$Id$"
 
+try:
+    from .tools import DISABLE_PLOT
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import DISABLE_PLOT
+    from tools import robust_path as get_shared_data
+
 import pytest
 
 from dataclasses import dataclass
@@ -16,12 +23,6 @@ from openalea.sequence_analysis.sequences import Sequences
 from openalea.sequence_analysis.semi_markov import SemiMarkov
 from openalea.sequence_analysis.data_transform import AddAbsorbingRun
 
-try:
-    from .tools import interface
-    from .tools import robust_path as get_shared_data
-except ImportError:
-    from tools import interface
-    from tools import robust_path as get_shared_data
 
 MAX_RUN_LENGTH = 20  # hardcoded values in CPP code
 
@@ -139,3 +140,27 @@ def test_wrong_sequence_length_seq(seq):
         assert False
     except Exception:
         assert True
+
+if __name__ == "__main__":
+    
+    class AbsorbingData:
+        data: Any
+        max_length: float
+        max_run_length: float
+    
+    class request:
+        param: Any
+
+    def AddAbsorbingRunData(request):
+        if request.param == "raw":
+            return AbsorbingData(None, -1, 20)
+        elif request.param == "sequences":
+            return Sequences(str(get_shared_data("sequences1.seq")))
+        elif request.param == "semimarkov":
+            markov = SemiMarkov(str(get_shared_data("test_semi_markov.dat")))
+            return markov.simulation_nb_elements(1, 1000, True)
+
+    T = TestAddAbsorbingRun()
+    R = request
+    R.param = "raw"
+    T.test_max_length(AddAbsorbingRunData(R))
