@@ -1544,6 +1544,15 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
             if (iter <= EXPLORATION_NB_ITER) {
               occupancy_likelihood = hoccupancy->Reestimation<int>::parametric_estimation(occupancy , 1 , true ,
                                                                                           OCCUPANCY_THRESHOLD , geometric_poisson);
+              if (occupancy_likelihood == D_INF) {
+#             ifdef DEBUG
+                  cout << "Relaxing fixed parametric family for " << STAT_label[STATL_STATE] <<  i 
+                       << " " << STAT_label[STATL_SOJOURN_TIME] << " distribution." << endl;
+#             endif                
+                occupancy_likelihood = hoccupancy->Reestimation<int>::type_parametric_estimation(occupancy , 1 , true ,
+                                                                                                 OCCUPANCY_THRESHOLD , geometric_poisson);
+              }
+
             }
             else {
               occupancy_likelihood = hoccupancy->Reestimation<int>::type_parametric_estimation(occupancy , 1 , true ,

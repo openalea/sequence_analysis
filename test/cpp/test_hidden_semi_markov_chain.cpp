@@ -99,18 +99,18 @@ int main(void)
    seq_read = Sequences::ascii_read(error, data_fail);
    cout << error;
    seq_estim = new MarkovianSequences(*seq_read);
-/*
+
    cout << "Estimate default from lippia_fail.seq" << endl;
-   hsmc = seq_estim->hidden_semi_markov_estimation(error, &cout, itype, 4, true, stat_tool::D_DEFAULT, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
+   /* hsmc = seq_estim->hidden_semi_markov_estimation(error, &cout, itype, 4, true, stat_tool::D_DEFAULT, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
    if (hsmc != NULL) {
             cout << "Estimated model:" << endl;
             hsmc->ascii_write(cout);
             delete hsmc;
             hsmc = NULL;
-   }
+   }*/
 
-  
    // Variant: using LR initial model
+   // TODO: debugging. Comment operation above. Stop at iteration 2 l. 784. Check reestimation of sojourn duration 0.
    hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcTC00LRpath);
    if (hsmc_ref != NULL) {
        cout << "Estimate file init from lippia_fail.seq" << endl;
@@ -126,9 +126,9 @@ int main(void)
       delete hsmc_ref;
       hsmc_ref = NULL;
    }
-*/
+
    // Variant: using Irreducible initial model
-   hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcTC00Irpath);
+   /* hsmc_ref = HiddenSemiMarkov::ascii_read(error, hsmcTC00Irpath);
    if (hsmc_ref != NULL) {
        cout << "Estimate file init from lippia_fail.seq" << endl;
 	 hsmc_est_file = seq_estim->hidden_semi_markov_estimation(error, &cout, *hsmc_ref, geometric_poisson , common_dispersion, estimator, counting_flag, state_sequence, 300);
@@ -147,7 +147,7 @@ int main(void)
       }
       delete hsmc_ref;
       hsmc_ref = NULL;
-   }
+   }*/
 
    delete seq_estim;
    delete seq_read;
