@@ -6,6 +6,12 @@
 
 __revision__ = "$Id$"
 
+try:
+    from .tools import DISABLE_PLOT, interface, runTestClass
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import DISABLE_PLOT, interface, runTestClass
+    from tools import robust_path as get_shared_data
 
 from openalea.stat_tool import _stat_tool
 import pytest
@@ -23,13 +29,9 @@ from openalea.sequence_analysis.data_transform import (
 from openalea.stat_tool.data_transform import *
 from openalea.stat_tool.cluster import Cluster
 from openalea.stat_tool.cluster import Transcode, Cluster
-
-from .tools import DISABLE_PLOT, interface
-from .tools import runTestClass
+from openalea.stat_tool.output import Plot
 
 from openalea.sequence_analysis.sequences import Sequences, IndexParameterType
-from .tools import robust_path as get_shared_data
-
 
 @pytest.fixture
 def build_data():
@@ -471,6 +473,11 @@ def test_cumulate(build_data):
     res = Cumulate(s)
     assert res.cumul_length == 52
 
+def test_data_plot(build_data):
+    """Test plot data"""
+    data = build_data
+    Plot(data, ViewPoint="Data")
+
 
 def test_extract_vectors(build_data):
     """see test_extract_vectors"""
@@ -555,3 +562,44 @@ seq.sojourn_time_sequences
 seq.remove_index_parameter
 seq.round
 """
+
+
+if __name__ == "__main__":
+    
+    def build_data():
+        """todo: check identifier output. should be a list"""
+        # build a list of 2 sequences with a variable that should be identical
+        # to sequences1.seq
+        data = Sequences([[1,0,0,0,1,1,2,0,2,2,2,1,1,0,1,0,1,1,1,1,0,1,1,1,0,1,2,2,2,1],
+                [0, 0, 0, 1, 1, 0, 2, 0, 2, 2, 2, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0]]
+        )
+        assert data
+
+        assert data.nb_sequence == 2
+        assert data.nb_variable == 1
+        assert data.cumul_length == 52
+        assert data.max_length == 30
+
+        assert [0, 1] == data.get_identifiers()
+
+        return data
+
+
+    def build_seqn():
+        return Sequences([[[1, 1, 1], [12, 12, 12]], [[2, 2, 2], [22, 23, 24]]])
+
+
+    def build_seq1():
+        return Sequences([[1, 1, 1], [2, 2, 2]])
+
+
+    def build_seq_realn():
+        return Sequences(
+            [
+                [[1.5, 1.5, 1.5], [12.5, 12.5, 12.5]],
+                [[2.5, 2.5, 2.5], [22.5, 23.5, 24.5]],
+            ]
+        )
+    
+    test_recurrence_time_sequences(build_data())
+    test_data_plot(build_data())
