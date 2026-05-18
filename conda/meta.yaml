@@ -33,13 +33,13 @@ requirements:
     {% for dep in build_deps %}
     - {{ dep }}
     {% endfor  %}
-    - cmake
-    - make                                 # [not win]
     - openalea.stat_tool
     - boost
 
   build:
     - {{ compiler("cxx") }}
+    - cmake
+    - make                                 # [not win]
 
   run:
     - python

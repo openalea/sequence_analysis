@@ -1,6 +1,7 @@
 name: sequence_analysis_dev
 channels:
   - conda-forge
+  - openalea3/label/dev
   - openalea3
 dependencies:
   - python
@@ -8,6 +9,6 @@ dependencies:
   - boost
   - matplotlib-base
   - openalea.stat_tool
+  - compilers
   - pip:
       - -e '..[test,dev,doc]'
-

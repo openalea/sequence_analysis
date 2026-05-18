@@ -14,22 +14,20 @@
 #
 #########################################################################
 """
+
 __revision__ = "$Id: test_exploratory.py 8676 2010-04-20 15:28:46Z cokelaer $"
 
-from openalea.sequence_analysis import *
-from openalea.sequence_analysis.estimate import  Estimate
-from openalea.sequence_analysis import get_shared_data as path
 from os.path import join as pj
-seq0 = Sequences(pj(path ,"chene_sessile_15pa.seq"))
 
+from openalea.sequence_analysis import *
+from openalea.sequence_analysis import get_shared_data as path
+
+seq0 = Sequences(pj(path("chene_sessile_15pa.seq")))
 
 
 # change of unit for the variable diameter of the annual shoot
 
 marginal3 = ExtractHistogram(seq0, "Value", 3)
 Plot(Cluster(marginal3, "Information", 0.75))
-#Plot(Cluster(marginal3, "Information", 0.61))
-#Plot(Cluster(marginal3, "Step", 10))
-
-
-
+# Plot(Cluster(marginal3, "Information", 0.61))
+# Plot(Cluster(marginal3, "Step", 10))
