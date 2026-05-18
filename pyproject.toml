@@ -42,7 +42,7 @@ authors = [
   { name = "Yann Guédon" },
   { name = "Jean-Baptiste Durand" },
   { name = "Thomas Cokelaer" },
-  { name = "Christophe Pradal"},
+  { name = "Christophe Pradal" },
   { name = "Thomas Arsouze" },
 ]
 description = "Statistical analysis of plant architecture sequences"
@@ -84,7 +84,7 @@ doc = [
   "nbsphinx",
   "ninja",
   "breathe",
-  "doxygen"
+  "doxygen",
 ]
 
 # section specific to conda-only distributed package (not used by pip yet)
@@ -98,4 +98,3 @@ Homepage = "https://sequence_analysis.readthedocs.io/"
 "Bug Tracker" = "https://github.com/openalea/sequence_analysis/issues"
 Discussions = "https://github.com/openalea/sequence_analysis/discussions"
 Changelog = "https://github.com/openalea/sequence_analysis/releases"
-
