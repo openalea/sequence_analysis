@@ -91,31 +91,6 @@ Data structures
     :show-inheritance:
     :synopsis: TimeEvents
 
-
-.. currentmodule:: openalea.sequence_analysis.top_parameters
-
-:mod:`openalea.sequence_analysis.top_parameters` module
--------------------------------------------------------
-.. automodule:: openalea.sequence_analysis.top_parameters
-    :members:
-    :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-    :synopsis: Top parameters
-
-
-.. currentmodule:: openalea.sequence_analysis.tops
-
-:mod:`openalea.sequence_analysis.tops` module
----------------------------------------------
-.. automodule:: openalea.sequence_analysis.tops
-    :members:
-    :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-    :synopsis: Tops
-
-
 .. currentmodule:: openalea.sequence_analysis.variable_order_markov
 
 :mod:`openalea.sequence_analysis.variable_order_markov` module

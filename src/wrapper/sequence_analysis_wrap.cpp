@@ -25,7 +25,6 @@
 
 #include "export_base.h"
 #include "export_function.h"
-// #include "export_tops.h"
 #include "export_sequences.h"
 #include "export_correlation.h"
 #include "export_markovian_sequences.h"
@@ -65,9 +64,6 @@ BOOST_PYTHON_MODULE(_sequence_analysis)
   class_self_transition();
 
   class_correlation();
-
-//  class_tops();
-//  class_top_parameters();
 
   class_nonhomogeneous_markov();
   class_nonhomogeneous_markov_data();
