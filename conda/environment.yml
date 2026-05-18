@@ -10,5 +10,6 @@ dependencies:
   - matplotlib-base
   - openalea.stat_tool
   - compilers
+  - doxygen
   - pip:
       - -e '..[test,dev,doc]'
