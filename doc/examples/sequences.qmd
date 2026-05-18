@@ -1,0 +1,397 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.18.1
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+```{python}
+#!/usr/bin/python3.10
+```
+
+Prerequisites: pandas, xlrd, matplotlib, rpy2
+
+# HSMC modelling
+
+## Configuration
+### It is assumed that this notebook is run from StructureAnalysis/sequence_analysis/tutorials
+
+```{python}
+import numpy as np
+from openalea.sequence_analysis import Estimate
+from openalea.sequence_analysis import Plot
+import os
+import pandas as pd
+# import random
+import matplotlib.pyplot as plt
+```
+
+##### Check pandas version
+
+```{python}
+# print pd.__version__
+```
+
+```{python}
+import xlrd
+xlrd.__version__
+```
+
+##### Enabling R extensions
+
+```{python}
+%load_ext rpy2.ipython
+```
+
+#####  Place variables in markdown outputs
+
+```{python}
+from IPython.display import Markdown
+from IPython.core.magic import register_cell_magic
+
+
+@register_cell_magic
+def markdown(line, cell):
+    return Markdown(cell.format(**globals()))
+```
+
+## Determining if images have to be saved (not used for the moment)
+
+## Loading and preparing data
+
+```{python}
+import sys, os
+```
+
+```{python}
+sys.path
+```
+
+```{python}
+sys.path.append(".." + os.sep + "tutorials")
+```
+
+```{python}
+from openalea.seqint import model
+```
+
+```{python}
+import graphviz
+```
+
+```{python}
+import numpy as np
+
+from Utils import *
+from Code.amlseq2R import *
+```
+
+```{python}
+print(os.getcwd())
+```
+
+```{python}
+home_dir = "./"
+base_path = home_dir
+ressource_path = base_path
+os.chdir(base_path)
+```
+
+```{python}
+os.listdir(ressource_path + os.sep )
+```
+
+**Read an existing HSMC model**
+
+```{python}
+from openalea.sequence_analysis import HiddenSemiMarkov
+
+model_file = "sim_v_5s_LR.hsmc"
+#model_file = "init_v_5s_LR.hsmc"
+hmsc = HiddenSemiMarkov(ressource_path + os.sep + model_file)
+```
+
+**Simulate sequences**
+
+```{python}
+from openalea.sequence_analysis import Simulate
+```
+
+```{python}
+nb_seq = 10
+seq_length = 100
+seq = hmsc.simulation_nb_sequences(nb_seq, seq_length, True)
+```
+
+```{python}
+# Print first simulated sequence.
+# First variable is the simulated state
+print(seq[0])
+```
+
+**Perform operations on sequences**
+
+```{python}
+# Discard variable 1 (state)
+obs = seq.select_variable([1], keep=False)
+```
+
+## Plotting marginal probabilities of data
+
+```{python}
+# Variable 1: lateral shoot type
+obs.plot("Intensity", 0)
+plt.show()
+```
+
+```{python}
+# Variable 2: lateral flowering
+obs.plot("Intensity", 1)
+plt.show()
+```
+
+```{python}
+# Variable 3: terminal flowering
+obs.plot("Intensity", 2)
+plt.show()
+```
+
+## HSCM re-estimation
+
+```{python}
+# Discard state variable
+seq1v = seq.select_variable([2, 3, 4], True)
+```
+
+```{python}
+nb_states = 5
+init_file = base_path + os.sep + "seq1v_" + str(nb_states) + "s_LR_init.hsmc"
+```
+
+```{python}
+from openalea.sequence_analysis import Estimate
+from openalea.sequence_analysis import HiddenSemiMarkov
+```
+
+```{python}
+# Conversion dos2unix file if needed
+try:
+    hmsc_init = HiddenSemiMarkov(init_file)
+except:
+     dos2unix(init_file, init_file)
+hmsc_init = HiddenSemiMarkov(init_file)
+```
+
+### Estimate HSCM with default initialization
+
+Left-right model
+
+```{python}
+hsmc1 = Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "LeftRight", Nbiteration=300)   
+print(hsmc1)
+```
+
+Irreducible model
+
+### Plot model and data characteristics.    
+Syntax: hsmc1.extract(int type, int variable, int value)    
+types correspond to SELF_TRANSITION , OBSERVATION , INTENSITY , FIRST_OCCURRENCE , RECURRENCE_TIME , SOJOURN_TIME ,   INITIAL_RUN , FINAL_RUN , NB_RUN , NB_OCCURRENCE ,  COUNTING , LENGTH , SEQUENCE_CUMUL , SEQUENCE_MEAN
+
+```{python}
+# Type 1: emission distribution,  Variable 1: lateral shoot type, State 4
+hsmc1.extract(1, 1, 4).plot()
+plt.show()
+```
+
+```{python}
+# hsmc1.extract(2, 1, 4).plot()
+```
+
+```{python}
+# All emission distributions for variable 1
+plt.figure(1)
+for i in range(5):
+    plt.subplot(3,3, i+1)
+    hsmc1.extract(1, 1, i).plot()
+```
+
+### TODO: states 3 and 4 are swapped?
+
+```{python}
+# All emission distributions for variable 2
+plt.figure(1)
+for i in range(5):
+    plt.subplot(3,3, i+1)
+    hsmc1.extract(1, 2, i).plot()
+```
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300))  
+```
+
+Discard state sequence computations (entropy, Viterbi?)
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, StateSequence=False))
+```
+
+Using the MCEM option would cause the library to crash
+
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, Algorithm="MCEM", MinNbStateSequence=1, MaxNbStateSequence=10, Parameter=10))
+
+Using the Equilibrium option (stationary) would cause the library to crash
+
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Equilibrium", nb_states))   
+
+Change option in means of initial occupancy distributions
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, InitialOccupancyMean=20))
+```
+
+Change option in estimating occupancy distributions (censoring, etc.?)
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, Estimator="KaplanMeier"))
+```
+
+Change option in state sequence restoration (Viterbi vs. smoothing)
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, StateSequences="ForwardBackward"))
+```
+
+Change option in estimating occupancy distributions
+
+```{python}
+print(Estimate(seq1v, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "Irreducible", Nbiteration=300, OccupancyMean="Estimated"))
+```
+
+Other options in estimate
+
+```{python}
+help(Estimate)
+```
+
+### Estimate HSCM with manual initialization from file
+
+```{python}
+hsmc1 = Estimate(seq1v, "HIDDEN_SEMI-MARKOV", hmsc_init, NbIteration=300)
+print(hsmc1)
+```
+
+### Export states
+
+```{python}
+from openalea.sequence_analysis import ExtractData
+seg = ExtractData(hsmc1) # Data and segmentation
+```
+
+```{python}
+# Restored states are added as the first variable to seq_1v, see
+print(seg[0][0:10])
+print(seq1v[0][0:10])
+```
+
+```{python}
+seg_dir = "Results"
+```
+
+```{python}
+if not os.path.exists(seg_dir): 
+    # if the seg_dir directory is not present  
+    # then create it. 
+    os.makedirs(seg_dir) 
+```
+
+```{python}
+# Export into file
+
+seg_file = "seq1v_" + str(nb_states) + "s_LR_segm.seq"
+output_Rpyseq1_file = seg_dir + os.sep + seg_file[0:-4] + ".csv"
+WriteRSequence(seg, output_Rpyseq1_file, RestoredStatesHeader())
+```
+
+Create DataFrame
+
+```{python}
+df = pd.read_csv(output_Rpyseq1_file, index_col=0, comment="#", usecols=range(6))
+var_names = [' axillary shoot type',' lateral flowering', ' terminal flowering']
+df = df[var_names]
+```
+
+```{python}
+# Add sequence identifiers to DF
+seqid = []
+for i in range(len(seq1v)):
+    seqid += [i+1] * len(seq1v[i])
+seqid
+df["seqid"] = seqid
+```
+
+```{python}
+from seqint.pyseq_data_frame import PySeqDataFrame
+pyd = PySeqDataFrame(df, seq_index_name="seqid")
+pyd.seq_index_name
+pyd.col_to_seq(var_names)
+seqc = pyd.get_input_sequence(var_names)
+```
+
+```{python}
+assert(str(seqc[0]) == str(seq1v[0]))
+```
+
+### Embed HSCM within Model class for automatic parameter visualization
+
+```{python}
+output_path = base_path + os.sep + "Results" 
+model = Model(pyd, output_process_name=var_names, init_hsmc_file=init_file, output_path=output_path)
+model.iterate_em(300)
+model.hsmm.save(os.path.join(output_path, 'seq1v_' + str(nb_states) + 's_LR.hsmc'))
+model.print_hsmc_file(verbose=False)
+```
+
+```{python}
+from seqint import html_report
+
+output_path = "." + os.sep + "tmp_dir"
+
+if not os.path.exists(output_path):
+    os.mkdir(output_path)
+    
+report = html_report.Htmlreport(model, output_path=output_path)
+report.make_html(True)
+```
+
+*Removing some garbage files*
+
+```{python}
+report_prefix = report._html_report_file_path[0:-11]
+report_prefix = report_prefix.split("/")[2]
+import glob
+for f in glob.glob("." +os.sep +  "*.dat"):
+    os.remove(f)
+```
+
+```{python}
+print("Report printed in " + str(report._html_report_file_path))
+```
+
+```{python}
+import shutil
+#shutil.rmtree(tempdir)
+```
+
+```{python}
+import dill
+# dill.dump_session('notebook_env.db')
+```
+
+

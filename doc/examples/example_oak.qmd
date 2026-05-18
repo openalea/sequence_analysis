@@ -1,0 +1,293 @@
+---
+title: 'Sequences advanced tutorial: Oak trunk annual shoots'
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.18.1
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+```{python}
+#!/usr/bin/python3.10
+```
+
+
+
+## Configuration
+### It is assumed that this notebook is run from StructureAnalysis/sequence_analysis/tutorials
+
+    Functions used:
+        * data: Sequences, Vectors
+        * output: Plot, Display
+        * data exploration: ExtractHistogram, Cluster, Regression, ValueSelect, VarianceAnalysis, Compare, ContingencyTable, Estimate
+
+    :Authors: Thomas Cokelaer
+    :References: Oak trunk annual shoot example
+    :Data: Patrick Heuret
+
+In this example, we will explain some functionalities of sequence_analysis package by going through the python script `example_oak.py` step by step. First, we will start to explain what is a sequence data file and how to explore and visualize its contents.
+
+**Import OpenAlea packages**
+
+```{python}
+from openalea.stat_tool import _stat_tool
+from openalea.sequence_analysis import _sequence_analysis
+from openalea.sequence_analysis import Sequences
+from openalea.stat_tool import Vectors, Regression
+
+
+from openalea.stat_tool.data_transform import *
+from openalea.stat_tool.cluster import Cluster
+from openalea.stat_tool import (Transcode, 
+VarianceAnalysis, 
+ContingencyTable, 
+Compare, 
+Estimate,
+Display)
+
+import openalea.stat_tool.plot #import DISABLE_PLOT
+from openalea.stat_tool.plot import DISABLE_PLOT
+DISABLE_PLOT = False
+
+import os
+
+from openalea.stat_tool.output import plot, Plot
+
+plot.DISABLE_PLOT = DISABLE_PLOT
+
+from openalea.stat_tool.plot import get_plotter, mplotlib 
+```
+
+For correct figure rendering
+
+```{python}
+%matplotlib inline
+```
+
+#####  Place variables in markdown outputs
+
+```{python}
+from IPython.display import Markdown
+from IPython.core.magic import register_cell_magic
+
+
+@register_cell_magic
+def markdown(line, cell):
+    return Markdown(cell.format(**globals()))
+```
+
+## Preliminaries: data set
+
+```{python}
+import sys, os
+```
+
+```{python}
+sys.path
+```
+
+```{python}
+sys.path.append(".." + os.sep + "tutorials")
+```
+
+```{python}
+from pathlib import Path
+from openalea.sequence_analysis import __path__ as seq_path
+data_path = Path(seq_path[0])
+data_path = str(Path.joinpath(data_path.parent.parent.parent.absolute(), "share","data"))
+```
+
+The file `chene_sessile_15pa.seq` is used as a data set. Its
+extension `seq` indicates that this file contains a list of sequences. 
+
+This file contains an header that provides the number of variables and their
+types. Here there are 6 variables that are labelled as **STATE** variables. 
+There are 46 sequences in total, and a sequence looks like::
+
+    95 110 219 2 52 14 | 96 17 119 2 24 9 | 97 57 101 2 33 1
+
+Each element in the sequence is separated by the other by the pipe
+    symbol, which is optional when the sequence is univariate. In the sequence
+    above, we have 6 variables and each sequence is 3-elements long (one for
+    each year 95, 96, 97).
+
+The Sequences data structures allows to read a file and returns a Sequences object that can be indexed like a normal list - the first index being the sequence index and the
+second index being the vector index.
+
+```{python}
+seq = Sequences(data_path + os.sep + 'chene_sessile_15pa.seq')
+```
+
+```{python}
+# First sequence
+seq[0]
+```
+
+```{python}
+# 2nd value of the first sequence
+seq[0][1]
+```
+
+```{python}
+# variant of seq[0][1]
+seq[0,1]
+```
+
+Note the syntax to access the second vector of the first sequence. First, 
+   indices starts at zero like in C/python languages and the index syntax may be either   [i][j] or [i,j].
+
+You may want to extract observations for each sequence at each time step as an unstructured collection of vectors:
+
+
+```{python}
+seq.nb_sequence
+```
+
+```{python}
+vec = Vectors(seq)
+```
+
+```{python}
+vec.nb_vector
+```
+
+```{python}
+assert vec[3*10] == seq[10][0]
+```
+
+138 is simply the number of sequences times the number of element per sequences (3 here).
+
+# Read sequences in a file and plot a data viewpoint
+
+Let us come back to the example. Once the data being read, we can plot the results using a Data viewpoint (see `openalea.stat_tool.output.Plot`).   
+Here, all sequences are 3 annual shoots long. Sequences are all equal for variable 1 (year): 95, 96, 97. The other variables are represented using one color per sequence. 
+
+```{python}
+Plot(seq, ViewPoint="Data")
+```
+
+# Looking at one variable
+
+On the first line of the following code, we first extract a given variable (the third one) and then cluster into bins it before plotting the variable histogram. Note that the extraction is made in such a way that each vector in each sequence is extracted in a single object. So you have 138 vectors in the **marginal3** variable.
+
+```{python}
+marginal3 = ExtractHistogram(seq, "Value", 3)
+Plot(Cluster(marginal3, "Information", 0.75))
+```
+
+The variable marginal3 could also have been obtained as follows:
+
+```{python}
+marginal3 = ExtractHistogram(vec, 3)
+```
+
+# Regression and vectors
+
+Now, coming back to the first (year) and second variable (growth length), we plot the average of the second variable versus the year (first variable) as follows. The second graph represents the residuals (differences between values and average).
+
+```{python}
+# plot of the average sequence
+Plot(Regression(vec, "MovingAverage", 1, 2, [1]))
+```
+
+The argument    
+`Regression(vec, "MovingAverage", 1, 2, [1])`    
+computes the average value per time index. Argument "1" is the explanatory variable (here, year), argument "2" is the response variable, here, annual shoot length, and [1] is the filter applied for averaging.   
+More general filters can be applied, for example [0.1, 0.7, 0.2], meaning that at time *t*, the average ${\hat x}_t$ will combine $x_{t-1}$, $x_t$ and $x_{t+1}$ as ${\hat x}_t=0.1 x_{t-1}+0.7 x_t + 0.2 x_{t+1}$.
+
+# Comparison and variance analysis
+
+Then, we want to look those data in more details by selecting the length year by year. So, we first select each year one by one (line 1 to 3 below). Here, `ValueSelect` selects the first variable when its values is 95, or 96 or 97 from which an histogram is extracted. All 3 histograms can be plotted together.   
+
+```{python}
+vec95 = ValueSelect(vec, 1, 95)
+vec96 = ValueSelect(vec, 1, 96)
+vec97 = ValueSelect(vec, 1, 97)
+
+Plot(ExtractHistogram(vec95, 2), ExtractHistogram(vec96, 2), ExtractHistogram(vec97, 2))
+```
+
+The command  
+`VarianceAnalysis(vec, 1, 2, "N")`    
+achieves variance analysis (ANOVA) computations using as class (group) variable "1", response variable "2", treating response variable as "N"umeric (as opposed to "O"rdinal).   
+The output highlights significant difference in shoot length distributions depending on year (assuming Gaussian distributions):
+
+```{python}
+print(VarianceAnalysis(vec, 1, 2, "N"))
+```
+
+Further statistics to compare the three distributions can be obtained with
+`print(Compare(ExtractHistogram(vec95, 2), ExtractHistogram(vec96, 2), ExtractHistogram(vec97, 2), "N"))`    
+The last argument indicates whether the target variable has to be considered as  "N"umeric, "O"rdinal or "S"ymbolic.   
+The output is somewhat verbose and not displayed here, it contains essentially the same information as above (relative and cumulated frequencies, ANOVA). Additionally, it contains a similarity measure between distributions $E\left[X-Y\right]$ inspired by the so called energy distance.
+
+```{python}
+# print(Compare(ExtractHistogram(vec95, 2), ExtractHistogram(vec96, 2), ExtractHistogram(vec97, 2), "N"))
+```
+
+# Comparison and ContingencyTable
+
+Here again, we compare variables but looking at the ranks rather than the years.   
+We first look at the contingency table obtained by crossing variables 1 (year) and 4 (number of growth cycles)
+
+```{python}
+print(ContingencyTable(vec, 1, 4))
+```
+
+... and then plot some histograms.
+
+```{python}
+Plot(ExtractHistogram(vec95, 4), ExtractHistogram(vec96, 4), ExtractHistogram(vec97, 4))
+```
+
+Here the response variable is ordinal, so the last argument of `VarianceAnalysis` is "O"
+
+```{python}
+print(VarianceAnalysis(vec, 1, 4, "O"))
+```
+
+# Estimating a distribution for annual shoot length
+
+Now, we extract an historam from the second variable and estimated a model that is a mixture of 4 negative binomial distribution and plot the results: either the mixture model or component by component.
+
+```{python}
+mixt20 = Estimate(ExtractHistogram(vec, 2), "MIXTURE", "NB", "NB", "NB", "NB", NbComponent="Estimated")
+print(Display(mixt20))
+```
+
+```{python}
+Plot(mixt20)
+```
+
+Below, the estimated mixture distribution is estimated and represented globally, without each separate component:
+
+```{python}
+Plot(ExtractDistribution(mixt20, "Mixture"))
+```
+
+The alternative method `estimate_DiscreteMixture` would yield the same mixture:
+
+```{python}
+mixt20b = ExtractHistogram(vec, 2).estimate_DiscreteMixture(["NB", "NB"])
+Plot(mixt20b)
+```
+
+# Regression
+
+Now, a regression model can be estimated to predict variable 5 (number of metamers) using variable 2 (shoot length). The right-hand figure represents residuals of the estimated regression model.
+
+```{python}
+regress10 = Regression(vec, "Linear", 5, 2)
+print(Display(regress10))
+```
+
+```{python}
+Plot(regress10)
+```
+
