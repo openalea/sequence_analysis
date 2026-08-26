@@ -233,7 +233,6 @@ public:
 void
 class_semi_markov()
 {
-
   class_<SemiMarkov, bases<StatInterface> >
   ("_SemiMarkov",  "SemiMarkov\n"
       "Constructors from a file required 3 arguments: length(int), counting_flag(boolean) and cumul_threshold (double)")
@@ -248,10 +247,13 @@ class_semi_markov()
     .def("extract_histogram", SemiMarkovWrap::extract_histogram, return_value_policy< manage_new_object >(), "todo")
     .def("extract", SemiMarkovWrap::extract, return_value_policy< manage_new_object >(), "todo")
 
-    DEF_RETURN_VALUE_NO_ARGS("get_semi_markov_data", &SemiMarkov::get_semi_markov_data, "returns semi_markov_data")
+    // DEF_RETURN_VALUE_NO_ARGS("get_semi_markov_data", &SemiMarkov::get_semi_markov_data, "returns semi_markov_data")
+    // returns the pointer without allocating a new object. Should not be used, method is private. Prefer SemiMarkov::extract_data belows.
     DEF_RETURN_VALUE_NO_ARGS("extract_data", SemiMarkovWrap::extract_data, "returns semi_markov_data")
 
     .def("file_ascii_write", SemiMarkovWrap::file_ascii_write,"Save vector summary into a file")
+    .def("get_nb_state", &SemiMarkov::get_nb_state,"Return the number of states")
+
     DEF_RETURN_VALUE("thresholding", SemiMarkovWrap::thresholding, args("index"), "todo")
 
     DEF_RETURN_VALUE("simulation_histogram", WRAP::simulation_histogram, args("todo"), "simulation")

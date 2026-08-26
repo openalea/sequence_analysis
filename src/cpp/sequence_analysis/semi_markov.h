@@ -249,6 +249,7 @@ namespace sequence_analysis {
     int get_nb_iterator() const { return nb_iterator; }
     SemiMarkovData* get_semi_markov_data() const { return semi_markov_data; }
     int get_nb_output_process() const { return nb_output_process; }
+    int get_nb_state() const { return nb_state; } /// Return number of states
     CategoricalSequenceProcess** get_categorical_process()
     const { return categorical_process; }
     CategoricalSequenceProcess* get_categorical_process(int variable)

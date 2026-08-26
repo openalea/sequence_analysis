@@ -13,11 +13,13 @@ _________________
 
 _________________
 
-**sequence analysis** Basic Statistical tools used by different Structure Analysis libraries.
+**sequence_analysis** is a python module for the analysis of time series (discrete time). It is mainly dedicated to the analysis of botanical sequences but can be used for general purposes. The module contains procedures for estimating semi-Markov, hidden semi-Markov, variable-order Markov and hidden variable-order Markov models. It also has procedure to estimate renewal processes and offers diverse tools to edit sets of sequences (filter, merge sets merge variables, select, etc.)
+
+sequence_analysis is relies on [OpenAlea](https://github.com/openalea/) and particularly the  [stat_tool module](https://github.com/openalea/stat_tool)
 
 ### Contributors
 
-Thanks to all that ontribute making this package what it is !
+Thanks to everone who ontribute making this package what it is!
 
 </a>
 <a href="https://github.com/openalea/sequence_analysis/graphs/contributors">

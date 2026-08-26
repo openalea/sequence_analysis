@@ -438,10 +438,16 @@ def Sequences(obj, **kargs):
 
 
 
+# Add methods to _Sequences
 
-
-
-
+def _Sequences_get_marginal_histogram(self, variable):
+    """Get marginal histogram"""
+    try:
+        return self.__get_marginal_histogram(variable)
+    except:
+        return self.__get_marginal_frequency_distribution(variable)
+    
+_Sequences.get_marginal_histogram = _Sequences_get_marginal_histogram
 
 def IndexParameterType(obj):
     """

@@ -480,24 +480,19 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
   }
 
   for (i = 0;i < nb_variable;i++) {
-    if ((type[i] != INT_VALUE) && (type[i] != REAL_VALUE) && (type[i] != STATE)) {
+    if ((type[i] != INT_VALUE) && (type[i] != REAL_VALUE)) {
       status = false;
       ostringstream error_message , correction_message;
       error_message << STAT_label[STATL_VARIABLE] << " " << i + 1 << ": "
                     << STAT_error[STATR_VARIABLE_TYPE];
       correction_message << STAT_variable_word[INT_VALUE] << " or "
                          << STAT_variable_word[REAL_VALUE];
+      if (type[i] == STATE) {
+        correction_message << ";\n" << "Convert type " << STAT_variable_word[STATE] 
+                           << " to " << STAT_variable_word[INT_VALUE] << ".";
+      }
       error.correction_update((error_message.str()).c_str() , (correction_message.str()).c_str());
     }
-# ifdef DEBUG
-    if (type[i] == STATE)
-    	cout << "Warning: " << STAT_label[STATL_VARIABLE] << " " << i + 1 << " has type " << STAT_variable_word[STATE];
-# endif
-# ifdef MESSAGE
-    if (type[i] == STATE)
-    	cout << "Warning: " << STAT_label[STATL_VARIABLE] << " " << i + 1 << " has type " << STAT_variable_word[STATE];
-# endif
-
   }
 
   if (ihsmarkov.nb_output_process != nb_variable) {
@@ -848,6 +843,8 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
       }
 #     endif
 
+      // NB. This is the reason why a variable of type STATE 
+      // would not be handled
       for (i = 0;i < nb_sequence;i++) {
         for (j = 0;j < nb_variable;j++) {
           switch (type[j]) {
@@ -1544,6 +1541,15 @@ HiddenSemiMarkov* MarkovianSequences::hidden_semi_markov_estimation(StatError &e
             if (iter <= EXPLORATION_NB_ITER) {
               occupancy_likelihood = hoccupancy->Reestimation<int>::parametric_estimation(occupancy , 1 , true ,
                                                                                           OCCUPANCY_THRESHOLD , geometric_poisson);
+              if (occupancy_likelihood == D_INF) {
+#             ifdef DEBUG
+                  cout << "Relaxing fixed parametric family for " << STAT_label[STATL_STATE] <<  i 
+                       << " " << STAT_label[STATL_SOJOURN_TIME] << " distribution." << endl;
+#             endif                
+                occupancy_likelihood = hoccupancy->Reestimation<int>::type_parametric_estimation(occupancy , 1 , true ,
+                                                                                                 OCCUPANCY_THRESHOLD , geometric_poisson);
+              }
+
             }
             else {
               occupancy_likelihood = hoccupancy->Reestimation<int>::type_parametric_estimation(occupancy , 1 , true ,

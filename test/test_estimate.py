@@ -14,10 +14,10 @@ from openalea.stat_tool.data_transform import ExtractHistogram
 from openalea.stat_tool import set_seed
 
 try:
-    from .tools import interface
+    from .tools import DISABLE_PLOT, interface
     from .tools import robust_path as get_shared_data
 except ImportError:
-    from tools import interface
+    from tools import DISABLE_PLOT, interface
     from tools import robust_path as get_shared_data
 
 from openalea.sequence_analysis import (
@@ -29,6 +29,7 @@ from openalea.sequence_analysis import (
     Estimate,
     _SemiMarkovData,
     HiddenVariableOrderMarkov,
+    HiddenSemiMarkov
 )
 
 _seq1 = Sequences(get_shared_data("dupreziana_20a2.seq"))
@@ -183,7 +184,6 @@ def Test_Estimate_VARIABLE_ORDER_MARKOV_from_markovian():
 def create_sequence_estimate_variable_order_markov():
     return Sequences(get_shared_data("sequences1.seq"))
 
-
 @pytest.fixture
 def create_hvom_estimate_hidden_variable_order_markov():
     return HiddenVariableOrderMarkov(get_shared_data("dupreziana21.hc"))
@@ -206,17 +206,27 @@ def test_estimate_hidden_variable_order_markov(
 
 @pytest.fixture
 def create_data_estimate_hidden_semi_markov():
-    return _SemiMarkovData()
+    return HiddenSemiMarkov(get_shared_data("wij1.hsc"))
 
 
 @pytest.fixture
 def create_sequence_estimate_hidden_semi_markov():
     return Sequences(get_shared_data("wij1.seq"))
 
+@pytest.fixture
+def create_sequence_simulate_hidden_semi_markov():
+    hsm = HiddenSemiMarkov(get_shared_data('test_hidden_semi_markov.dat'))
+    set_seed(0)
+    nb_seq = 30
+    seq_length = 100
+    seq = hsm.simulation_nb_sequences(nb_seq, seq_length, True)
+    return seq
+
 
 def test_estimate_hidden_semi_markov(
     create_data_estimate_hidden_semi_markov, create_sequence_estimate_hidden_semi_markov
 ):
+    """Estimate hidden semi-Markov model from initial number of states"""
     set_seed(0)
     # data is a hsm class
     Estimate(
@@ -226,6 +236,55 @@ def test_estimate_hidden_semi_markov(
         "Ordinary", 3, "LeftRight", NbIteration=300  
     )
 
+def test_estimate_init_model_hidden_semi_markov(
+    create_data_estimate_hidden_semi_markov, create_sequence_estimate_hidden_semi_markov
+):
+    """Estimate hidden semi-Markov model from initial model read from file"""
+    set_seed(0)
+    # data is a hsm class
+    Estimate(
+        create_sequence_estimate_hidden_semi_markov,
+        "HIDDEN_SEMI-MARKOV",
+        create_data_estimate_hidden_semi_markov, 
+        NbIteration=300  
+    )
+
+def test_estimate_hidden_semi_markov_wrong_nb_variable(
+    create_data_estimate_hidden_semi_markov, create_sequence_simulate_hidden_semi_markov
+):
+    """Estimate HiddenSemiMarkov with initial model and wrong number of variables"""
+    set_seed(0)
+    # data is a hsm class
+    create_sequence_simulate_hidden_semi_markov.set_type_to_int(1);
+    assert(create_sequence_simulate_hidden_semi_markov.get_type(1) == 0)
+    try:
+        Estimate(
+            create_sequence_simulate_hidden_semi_markov,
+            "HIDDEN_SEMI-MARKOV",
+            create_data_estimate_hidden_semi_markov,
+            NbIteration=300  
+        )
+    except:
+        assert True
+    else:
+        assert False
+
+def test_estimate_hidden_semi_markov_wrong_type(
+    create_sequence_simulate_hidden_semi_markov
+):
+    """Estimate HiddenSemiMarkov with initial model and wrong variable type"""
+    set_seed(0)
+    # data is a hsm class
+    try:
+        Estimate(
+        create_sequence_simulate_hidden_semi_markov,
+        "HIDDEN_SEMI-MARKOV",
+        "Ordinary", 3, "LeftRight", NbIteration=300  
+        )
+    except:
+        assert True
+    else:
+        assert False
 """
 def test_estimate_semi_markov():
     set_seed(0)
@@ -246,7 +305,7 @@ if __name__ == "__main__":
         return Vectors(seq0)
 
     def create_data_estimate_hidden_semi_markov():
-        return _SemiMarkovData()
+        return HiddenSemiMarkov(get_shared_data("wij1.hsc"))
 
     def create_sequence_estimate_variable_order_markov():
         return Sequences(get_shared_data("sequences1.seq"))
@@ -254,12 +313,16 @@ if __name__ == "__main__":
     def create_hvom_estimate_hidden_variable_order_markov():
         return HiddenVariableOrderMarkov(get_shared_data("dupreziana21.hc"))
 
-
     def create_sequence_estimate_hidden_semi_markov():
         return Sequences(get_shared_data("wij1.seq"))
 
-    def create_sequence_estimate_hidden_semi_markov():
-        return Sequences(get_shared_data("wij1.seq"))
+    def create_sequence_simulate_hidden_semi_markov():
+        hsm = HiddenSemiMarkov(get_shared_data('test_hidden_semi_markov.dat'))
+        set_seed(0)
+        nb_seq = 30
+        seq_length = 100
+        seq = hsm.simulation_nb_sequences(nb_seq, seq_length, True)
+        return seq
 
     def test_estimate_mixture():
         set_seed(0)
@@ -282,7 +345,41 @@ if __name__ == "__main__":
             "HIDDEN_SEMI-MARKOV",
             create_data_estimate_hidden_semi_markov(),
         )
+        # hsmc_est = Estimate(obs, "HIDDEN_SEMI-MARKOV", hsm, Nbiteration=300) 
+    
+    def test_estimate_hidden_semi_markov_wrong_type():
+        """Estimate HiddenSemiMarkov with initial model and wrong variable type"""
+        set_seed(0)
+        # data is a hsm class
+        try:
+            Estimate(
+            create_sequence_simulate_hidden_semi_markov(),
+            "HIDDEN_SEMI-MARKOV",
+            "Ordinary", 3, "LeftRight", NbIteration=300  
+        )
+        except:
+            assert True
+        else:
+            assert False
 
+    def test_estimate_hidden_semi_markov_wrong_nb_variable():
+        """Estimate HiddenSemiMarkov with initial model and wrong number of variables"""
+        set_seed(0)
+        # data is a hsm class
+        seq = create_sequence_simulate_hidden_semi_markov()
+        seq.set_type_to_int(1);
+        assert(seq.get_type(1) == 0)
+        try:
+            Estimate(
+                seq,
+                "HIDDEN_SEMI-MARKOV",
+                create_data_estimate_hidden_semi_markov(),
+                NbIteration=300  
+            )
+        except:
+            assert True
+        else:
+            assert False
     def test_estimate_mixture2():
         set_seed(0)
         mixt20 = Estimate(
@@ -309,7 +406,7 @@ if __name__ == "__main__":
     test_estimate_error1()"""
     # Test_Estimate_VARIABLE_ORDER_MARKOV_from_markovian()
     test_estimate_hidden_semi_markov()
-
+    test_estimate_hidden_semi_markov_wrong_nb_variable()
     """
     test_estimate_hidden_semi_markov()
     test_estimate_semi_markov()

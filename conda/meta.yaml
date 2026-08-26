@@ -33,13 +33,13 @@ requirements:
     {% for dep in build_deps %}
     - {{ dep }}
     {% endfor  %}
-    - cmake
-    - make                                 # [not win]
     - openalea.stat_tool
     - boost
 
   build:
     - {{ compiler("cxx") }}
+    - cmake
+    - make                                 # [not win]
 
   run:
     - python
@@ -62,7 +62,9 @@ test:
   source_files:
     - test/
   commands:
-    - pytest
+    - cd test
+    - pytest -v --ignore=aml          # [not win]
+
 
 
 about:
@@ -74,3 +76,5 @@ about:
 extra:
   recipe-maintainers:
     - Jean-Baptiste Durand
+    - Thomas Arsouze
+    - Christophe Pradal

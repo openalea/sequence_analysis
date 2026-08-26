@@ -1,28 +1,34 @@
-"""Abstract base class used by test_mixture, test_compound, etc"""
+"""Abstract base class used by test_hidden_semi_markov, etc.
+
+author: Jean-Baptiste Durand, Thomas Arsouze, Thomas Cokelaer
+"""
+
+__version__ = "$Id$"
 
 import os
+import sys
 
+import openalea.stat_tool.plot
 
-from openalea.stat_tool import Simulate
-from openalea.stat_tool.plot import DISABLE_PLOT
-from openalea.stat_tool.output import Display, Save
-
-DISABLE_PLOT = True
+# !!! Do not plot in nosetests !!!
+# buildbot cannot close the windwos popped up by the method/function Plot/plot
+# So, we test if the command "python setup.py nosetests" has been used.
+# Still, using nosetests executable, windows should pop up.
+if ("nosetests" in sys.argv) or ("pytest" in sys.argv[0]):
+    DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = True
+else:
+    DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = False
 
 from pathlib import Path
+
+from openalea.stat_tool import Simulate
+from openalea.stat_tool.output import Display, Save
+from openalea.stat_tool.distribution import set_seed
+
+
 from openalea.sequence_analysis import get_shared_data, get_shared_data_path
 import openalea.stat_tool as st
 import openalea.sequence_analysis as sa
-from openalea.stat_tool.distribution import set_seed
-
-# from openalea.stat_tool import *
-# from openalea.stat_tool.plot import DISABLE_PLOT
-
-# import os
-# from openalea.stat_tool.output import Display, Save
-
-
-__revision__ = "$Id$"
 
 
 def runTestClass(myclass):
@@ -31,18 +37,26 @@ def runTestClass(myclass):
         getattr(myclass, function)()
 
 
+def _remove_file(filename):
+    """alias to remove a file"""
+    try:
+        os.remove(filename)
+    except:
+        pass
+
+
 class interface:
-    """Interface to be used by test file that perform tests on the following
-    data structure: compound, convolution, mixture, histogram, vector
+    """Interface to be used by test files related to data structure such as
+    sequences.
 
     :param data: a data that will be filled using the build_data structure
-    :para filename: a filename to a file containing the relevant data structure
+    :param filename: a filename to a file containing the relevant data structure
     :param structure: reference to a data structure Class that is not instantiated.
 
     :Usage:
-    In you test file, add ::
+    In your test file, add::
 
-        >>> from .tools import interface
+        >>> from .tools import DISABLE_PLOT, interface
 
     Then, if we consider the Compound class case, create a class as follows::
 
@@ -58,27 +72,22 @@ class interface:
                 data = Compound(d1, d2)
                 return data
 
-            def test_empty(self):
-                self.empty()
-
     """
 
-    #    def __init__(self, data=None, filename=None, Structure=None):
-    #    self.data = data
-    #    self.filename = filename
-    #    self.structure = Structure
-    #    set_seed(0)
+    def __init__(self, data=None, filename=None, Structure=None):
+        if data is None:
+            raise AttributeError("data must be provided")
+        if Structure is None:
+            raise AttributeError("Structure  must be provided")
+
+        self.data = data
+        self.filename = filename
+        self.structure = Structure
+        self.N = 1000
+        set_seed(0)
 
     def build_data(self):
         raise NotImplementedError()
-
-    def empty(self):
-        """Test that empty constructor fails"""
-        try:
-            _m = self.structure()
-            assert False
-        except TypeError:
-            assert True
 
     def constructor_from_file(self):
         """Test constructor from file"""
@@ -94,7 +103,7 @@ class interface:
         try:
             _h = self.structure("whatever_wrong_filename.txt")
             assert False
-        except IOError:
+        except Exception:
             assert True
 
     def print_data(self):
@@ -120,26 +129,19 @@ class interface:
 
     def plot(self):
         """run plotting routines"""
-        if DISABLE_PLOT == False:
-            self.data.plot()
+        # if DISABLE_PLOT == False:
+        self.data.plot()
 
     def save(self, Format=None, skip_reading=False):
-        """In the Vector case, Format should be Data.
+        """In the Vector case, Format should be set to Data.
         :param skip_reading: some class do not have Filename Constructor;
             skip_reading can be set to False to prevent code to be run.
 
         .. todo:: This is surely a bug. to be checked"""
 
         c1 = self.data
-
-        try:
-            os.remove("test1.dat")
-        except:
-            pass
-        try:
-            os.remove("test2.dat")
-        except:
-            pass
+        # _remove_file('test1.dat')
+        # _remove_file('test2.dat')
 
         if Format is None:
             c1.save("test1.dat")
@@ -154,32 +156,33 @@ class interface:
             c1_read = self.structure("test1.dat")
             c2_read = self.structure("test2.dat")
 
-            print(c1_read)
-
             assert c1 and c1_read and c2_read
             assert str(c1_read) == str(c2_read)
 
-        # os.remove('test1.dat')
-        # os.remove('test2.dat')
+        _remove_file("test1.dat")
+        _remove_file("test2.dat")
 
     def plot_write(self):
         h = self.data
         h.plot_write("test", "title")
+        _remove_file("test.print")
+        _remove_file("test.plot")
+        _remove_file("test0.dat")
 
     def file_ascii_write(self):
         h = self.data
         h.file_ascii_write("test.dat", True)
-        os.remove("test.dat")
+        _remove_file("test.dat")
 
     def file_ascii_data_write(self):
         h = self.data
         h.file_ascii_data_write("test.dat", True)
-        os.remove("test.dat")
+        _remove_file("test.dat")
 
     def spreadsheet_write(self):
         h = self.data
         h.spreadsheet_write("test.dat")
-        os.remove("test.dat")
+        _remove_file("test.dat")
 
     def survival_ascii_write(self):
         d = self.data
@@ -196,15 +199,18 @@ class interface:
     def survival_spreadsheet_write(self):
         d = self.data
         d.survival_spreadsheet_write("test.xsl")
-        os.remove("test.xsl")
+        _remove_file("test.xsl")
 
-    def simulate(self):
+    def simulate(self, N=-1):
         """Test the simulate method"""
+        set_seed(0)
+        if N == -1:
+            N = self.N
         m = self.data
-        s = m.simulate(1000)
-        s2 = Simulate(m, 1000)
-        assert len(s) == 1000
-        assert len(s2) == 1000
+        s = m.simulate(N)
+        s2 = Simulate(m, N)
+        assert len(s) == N
+        assert len(s2) == N
         assert str(s2)
         assert str(s)
         return s
@@ -220,5 +226,13 @@ class interface:
 
 
 def robust_path(filename):
-    p = get_shared_data(filename)
-    return p
+    p = st.get_shared_data(filename)
+    if p is not None:
+        # module in develop mode?
+        return get_shared_data(filename)
+
+    p = Path(st.__path__[0])
+    if "src" in str(p):
+        root_pkg = p + "/../../.."
+        data = st.get_shared_data(root_pkg)
+        return os.path.join(data, filename)

@@ -42,7 +42,7 @@ authors = [
   { name = "Yann Guédon" },
   { name = "Jean-Baptiste Durand" },
   { name = "Thomas Cokelaer" },
-  { name = "Christophe Pradal"},
+  { name = "Christophe Pradal" },
   { name = "Thomas Arsouze" },
 ]
 description = "Statistical analysis of plant architecture sequences"
@@ -89,7 +89,7 @@ doc = [
 # section specific to conda-only distributed package (not used by pip yet)
 [tool.conda.environment]
 channels = ["openalea3", "conda-forge"]
-dependencies = ["boost", "matplotlib-base", "openalea.stat_tool", "doxygen"]
+dependencies = ["boost", "matplotlib-base", "openalea.stat_tool"]
 
 [project.urls]
 Repository = "https://github.com/openalea/sequence_analysis"
@@ -97,4 +97,3 @@ Homepage = "https://sequence_analysis.readthedocs.io/"
 "Bug Tracker" = "https://github.com/openalea/sequence_analysis/issues"
 Discussions = "https://github.com/openalea/sequence_analysis/discussions"
 Changelog = "https://github.com/openalea/sequence_analysis/releases"
-

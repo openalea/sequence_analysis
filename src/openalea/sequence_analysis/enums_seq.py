@@ -26,7 +26,7 @@ import openalea.stat_tool.enums as enumerate_st
 
 #todo: get rid if type_dict, rename the enumerate properly
 
-type_dict = enumerate_st.pearson_type
+type_dict = enumerate_st.correlation_type
 
 
 

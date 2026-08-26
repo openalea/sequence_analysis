@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""tests on mv_mixture"""
+"""tests on hidden semi-Markov models"""
 __version__ = "$Id$"
 
 # from openalea.stat_tool import _stat_tool
@@ -12,15 +12,13 @@ from openalea.stat_tool.data_transform import *
 from openalea.stat_tool.cluster import Cluster
 from openalea.stat_tool.cluster import Transcode, Cluster
 
-import openalea.stat_tool.plot #import DISABLE_PLOT
-# openalea.stat_tool.plot.DISABLE_PLOT = True
-from openalea.stat_tool.plot import DISABLE_PLOT
-DISABLE_PLOT = False
-# DISABLE_PLOT = True
-
-from .tools import interface
-from .tools import runTestClass, robust_path as get_shared_data
-
+try:
+    from .tools import DISABLE_PLOT, interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import DISABLE_PLOT, interface
+    from tools import robust_path as get_shared_data
+    
 import os
 
 from openalea.stat_tool.output import plot, Plot
@@ -32,10 +30,11 @@ from openalea.stat_tool.plot import get_plotter, mplotlib
 from openalea.stat_tool.distribution import set_seed
 
 def test1():
-    """Estimate HSMC with nonparametric emission distributions"""
+    """Estimate HSMC with nonparametric and parametric emission distributions, 
+    2 output processes."""
     set_seed(0)
 
-    hsm = HiddenSemiMarkov(str(get_shared_data('test_hidden_semi_markov.dat')))
+    hsm = HiddenSemiMarkov(get_shared_data('test_hidden_semi_markov.dat'))
 
     hsm.plot("Intensity", 1)
     hsm.plot("Observation", 1)
@@ -63,8 +62,8 @@ def test1():
     seq = hsm.simulation_nb_sequences(nb_seq, seq_length, True)
     assert(len(seq) == nb_seq)
     assert(len(seq[0]) == seq_length)
-    # NB: hsm has 1 output process but simulation includes the hidden state
-    assert(len(seq[0][1]) == 2)
+    # NB: hsm has 2 output processes but simulation includes the hidden state
+    assert(len(seq[0][1]) == 3)
 
     print(seq[0])
     obs = seq.select_variable([1], keep=False)
@@ -77,8 +76,6 @@ def test1():
     hsmc_est = Estimate(obs, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "LeftRight", NbIteration=300)
     print(hsmc_est.display())
 
-    # TODO: find adequate error message in 
-    # hsmc_est = Estimate(seq, "HIDDEN_SEMI-MARKOV", "Ordinary", nb_states, "LeftRight", NbIteration=300)
     plotter = mplotlib()
 
     hsmc_est.plot("Intensity", 1)

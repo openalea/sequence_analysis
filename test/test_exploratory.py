@@ -33,7 +33,13 @@ from openalea.sequence_analysis import (
     Vectors,
     VectorDistance,
 )
-from .tools import robust_path as get_shared_data
+
+try:
+    from .tools import DISABLE_PLOT, interface
+    from .tools import robust_path as get_shared_data
+except ImportError:
+    from tools import DISABLE_PLOT, interface
+    from tools import robust_path as get_shared_data
 
 
 def test1():

@@ -88,6 +88,3 @@ venv/
 docs/preconvert
 site/
 out
-
-# Sphinx
-_static

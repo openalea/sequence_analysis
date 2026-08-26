@@ -43,8 +43,6 @@ openalea.sequence_analysis.semi_markov                       15     15     100%
 openalea.sequence_analysis.sequences                        165    139      84%
 openalea.sequence_analysis.simulate                          46     43      93%
 openalea.sequence_analysis.time_events                       42     34      80%
-openalea.sequence_analysis.top_parameters                    33     33     100%
-openalea.sequence_analysis.tops                              32     20      62%
 openalea.sequence_analysis.variable_order_markov             18     18     100%
 TOTAL                                                       1444    1206    83%
 =========================================================== ====== ======= ========

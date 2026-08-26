@@ -748,6 +748,9 @@ namespace sequence_analysis {
     RenewalData* extract_renewal_data(stat_tool::StatError &error , int variable ,
                                       int begin_index_parameter , int end_index_parameter) const;
 
+    /// Convert variable from STATE to INT_VALUE
+    bool set_type_to_int(stat_tool::StatError &error , int variable);
+
     /// Merge several sets of Sequences (arrays of Sequences)
     Sequences* merge(stat_tool::StatError &error , int nb_sample , const Sequences **iseq) const;
     /// Merge several sets of Sequences (std::vector<Sequences>)
