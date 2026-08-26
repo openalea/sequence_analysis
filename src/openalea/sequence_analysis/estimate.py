@@ -370,9 +370,7 @@ def _estimate_hidden_semi_markov(obj, *args, **kargs):
                      InitialOccupancyMean],
                      [bool, bool, int, int, int, [int, float], bool,
                      [float, int]])
-    
-    print(Algorithm)
-    
+        
     if Algorithm != sub_markovian_algorithms["MCEM"]:
         options = ["Parameter", "MaxNbStateSequence", "MinNbStateSequence"]
         for option in options:

@@ -62,7 +62,39 @@ using namespace stat_tool;
 
 namespace sequence_analysis {
 
+/*--------------------------------------------------------------*/
+/**
+ *  \brief Convert variable from INT_VALUE to STATE
+ *
+ *  \param[in] error     reference on a StatError object,
+ *  \param[in] variable  variable whose type is to be converted
+ *                       (indexed from 1, should have type STATE)
+ *
+ *  \return              True iif the function applied successfully
+ */
+/*--------------------------------------------------------------*/
 
+bool Sequences::set_type_to_int(stat_tool::StatError &error , int variable)
+{
+  bool status = true;
+
+  error.init();
+
+  if ((variable < 1) || (variable > nb_variable)) {
+    status = false;
+    error.update(STAT_error[STATR_VARIABLE_INDEX]);
+  } 
+  if (status) {
+    variable--;
+    if (type[variable] != STATE) {
+      status = false;
+      error.update(STAT_error[STATR_VARIABLE_TYPE]);
+    } else {
+      type[variable] = INT_VALUE;
+    }
+  }
+  return status;
+}  
 
 /*--------------------------------------------------------------*/
 /**

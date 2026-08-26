@@ -111,11 +111,14 @@ public:
     boost::python::list sequences = extract<boost::python::list> (input_sequences);
 
 
-    lengths = new int[nb_sequences];
-    identifiers = new int[nb_identifiers];
-    types = new variable_nature[nb_types];
-    index_parameters = new int*[nb_sequences];
-
+    if (nb_sequences > 0) {
+      lengths = new int[nb_sequences];
+      index_parameters = new int*[nb_sequences];
+    }
+    if (nb_identifiers > 0)
+      identifiers = new int[nb_identifiers];
+    if (nb_types > 0)
+      types = new variable_nature[nb_types];
 
 
     //cout << "allocate memory and set values of index_parameters"<<endl;
@@ -144,13 +147,9 @@ public:
 
 
     //cout << " nb identifiers="<< nb_identifiers<<endl;
-    if (nb_identifiers > 0)
-    {
-      identifiers = new int[nb_identifiers];
+    if (nb_identifiers > 0) {
       for (int ii = 0; ii < nb_identifiers; ii++)
-        {
           identifiers[ii] = boost::python::extract<int>(input_identifiers[ii]);
-        }
     }
     //cout << "identifier ok"<<endl;
     //types is for sequences where all vectors have the same lengths only and are homogeneous (same signature)
@@ -821,6 +820,16 @@ public:
     return(ret);
   }
 
+  // Type conversion
+  static void
+  set_type_to_int(Sequences &input_seq, int variable)
+  {
+    StatError error;
+    bool status = input_seq.set_type_to_int(error, variable);
+    if (!status)
+      sequence_analysis::wrap_util::throw_error(error);
+  }
+
   // Merge
   static Sequences*
   merge(const Sequences &input_seq, const boost::python::list& seqs)
@@ -993,14 +1002,14 @@ public:
   static int
   get_length(const Sequences &seq, int index)
   {
-    if (index < 0 || index >= seq.get_nb_sequence())
+    if (index < 1 || index > seq.get_nb_sequence())
       {
         PyErr_SetString(PyExc_IndexError,
-            "index must be positive and less than number of sequences");
+            "index must be positive and not more than number of sequences");
         boost::python::throw_error_already_set();
       }
 
-    return seq.get_length(index);
+    return seq.get_length(index-1);
   }
 
   static double
@@ -1547,14 +1556,54 @@ public:
     return ret;
   }
 
+  static DiscreteDistributionData*
+  get_marginal_frequency_distribution(Sequences &input, int variable)
+  {
+    FrequencyDistribution *ret = NULL;
+    DiscreteDistributionData *retddd = NULL;
+    StatError error;
+
+    if ((variable > 0) && (variable <= input.get_nb_variable())) {
+      ret = input.get_marginal_distribution(variable-1);
+      if (ret == NULL) {
+        ostringstream error_message;
+        error_message << "; Histogram does not exist.";
+        error.update((error_message.str()).c_str());
+      }
+    } else {
+        error.update(STAT_error[STATR_VARIABLE_INDEX]);
+    }
+    if (!ret)
+      sequence_analysis::wrap_util::throw_error(error);
+    else
+      retddd = new DiscreteDistributionData(*ret);
+
+    return retddd;
+  }
+
   static Histogram*
   get_marginal_histogram(Sequences &input, int variable)
   {
-    Histogram *ret;
-    ret = input.get_marginal_histogram(variable);
+    Histogram *ret = NULL;
+    StatError error;
+
+    if ((variable > 0) && (variable <= input.get_nb_variable())) {
+      ret = input.get_marginal_histogram(variable-1);
+      if (ret == NULL) {
+        ostringstream error_message;
+        error_message << "; Histogram does not exist.";
+        error.update((error_message.str()).c_str());
+      }
+    } else {
+        error.update(STAT_error[STATR_VARIABLE_INDEX]);
+    }
+    if (!ret)
+      sequence_analysis::wrap_util::throw_error(error);
+    else
+      ret = new Histogram(*ret);
+
     return ret;
   }
-
 
 };
 
@@ -1647,6 +1696,7 @@ class_sequences()
    DEF_RETURN_VALUE_NO_ARGS("cross", SequencesWrap::cross, "Cross")
    DEF_RETURN_VALUE_NO_ARGS("cumulate", SequencesWrap::cumulate,"Cumulate")
    DEF_RETURN_VALUE_NO_ARGS("merge", SequencesWrap::merge, "Merge sequences")
+   DEF_RETURN_VALUE_NO_ARGS("set_type_to_int", SequencesWrap::set_type_to_int, "Convert variable from STATE to INT_VALUE")
    DEF_RETURN_VALUE_NO_ARGS("merge_variable", SequencesWrap::merge_variable, "Merge variables")
    DEF_RETURN_VALUE_NO_ARGS("markovian_sequences", SequencesWrap::markovian_sequences , "returns markovian sequence")
    DEF_RETURN_VALUE_NO_ARGS("get_plotable", SequencesWrap::get_plotable, "Return a plotable")
@@ -1658,7 +1708,8 @@ class_sequences()
 
     .def("segment_profile_write", SequencesWrap::segment_profile_write, args("sequences", "iidentifier","nb_segment", "model_type" , "output", "segmentation", "nb_segmentation"), "segment profile write for Display")
     .def("select_bin_width", SequencesWrap::select_bin_width, args("variable", "bin_width"), "select_bin_width on sequences")
-   DEF_RETURN_VALUE("get_marginal_histogram", SequencesWrap::get_marginal_histogram, args("variable"), "get_marginal_histogram wrapper")
+   DEF_RETURN_VALUE("__get_marginal_histogram", SequencesWrap::get_marginal_histogram, args("variable"), "get_marginal_histogram wrapper")
+   DEF_RETURN_VALUE("__get_marginal_frequency_distribution", SequencesWrap::get_marginal_frequency_distribution, args("variable"), "get_marginal_frequency_distribution wrapper")
 
 
 

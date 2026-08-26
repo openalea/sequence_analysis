@@ -1,2 +1,2 @@
-[ ] Remove plots from pytests
+[ ] Remove plots from pytests (NB. pytest test_name.py works, pytest does not)
 [ ] Make a list from tests to be updated

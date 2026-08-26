@@ -19,14 +19,13 @@ if ("nosetests" in sys.argv) or ("pytest" in sys.argv[0]):
 else:
     DISABLE_PLOT = openalea.stat_tool.plot.DISABLE_PLOT = False
 
+from pathlib import Path
 
 from openalea.stat_tool import Simulate
 from openalea.stat_tool.output import Display, Save
-import openalea.stat_tool.plot
 from openalea.stat_tool.distribution import set_seed
 
 
-from pathlib import Path
 from openalea.sequence_analysis import get_shared_data, get_shared_data_path
 import openalea.stat_tool as st
 import openalea.sequence_analysis as sa
@@ -75,7 +74,7 @@ class interface:
 
     """
 
-    def init(self, data=None, filename=None, Structure=None):
+    def __init__(self, data=None, filename=None, Structure=None):
         if data is None:
             raise AttributeError("data must be provided")
         if Structure is None:
